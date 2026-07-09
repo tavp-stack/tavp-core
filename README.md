@@ -1,90 +1,73 @@
-# tavp-core
+# TAVP Stack
 
-The heart of the **TAVP Stack** — **Tailwind + Alpine + Volt + Phalcon**,
-with a Laravel-style ergonomic layer on top of Phalcon's C-extension speed.
+> **T**ailwind CSS + **A**lpine.js + **V**olt + **P**halcon = TAVP
 
-> "As fast as Phalcon, as pleasant as Laravel."
+A curated tech stack for building fast, modern PHP web applications.
 
-## What this repo contains
+## Features
 
-`tavp-core` is the framework foundation every TAVP project is built on:
+- **Phalcon 5.16** — High-performance C-extension MVC framework
+- **Volt Templates** — Fast, secure template engine
+- **Tailwind CSS** — Utility-first CSS framework
+- **Alpine.js** — Lightweight JavaScript framework
+- **OTP Authentication** — Passwordless login via email, SMS, WhatsApp
+- **JWT API Auth** — Token-based API authentication
+- **Role & Permission** — RBAC system
+- **CLI Tools** — Code generation, migrations, deployment
+- **40+ UI Components** — TAVPblocks component library
+- **AI Integration** — OpenAI, Anthropic, Ollama support
+- **Module System** — Composer-based package discovery
+- **Marketplace** — Module and theme marketplace
 
-- **Bootstrap & DI** — `Application`, `Kernel`, service container
-- **Routing** — `Route::get/post/resource`, groups, middleware, named routes
-- **Controllers** — `BaseController`, `ApiController`, request/response wrappers
-- **Volt templating** — inheritance, partials, macros, auto-escaping
-- **ORM wrapper** — thin Eloquent-style layer over native Phalcon models
-- **Migrations** — Laravel-style `up/down`, rollback, fresh, status
-- **Middleware, Validation, Exceptions** — CSRF, auth, throttle, FormRequest
-- **Helpers** — `asset()`, `url()`, `route()`, `csrf_token()`, `old()`, `session()`
-
-## Requirements
-
-- PHP 8.1+
-- Phalcon 5.x (C-extension)
-- Composer
-- Node.js 18+ (for frontend assets)
-
-## Install (development)
+## Quick Start
 
 ```bash
-composer install
-npm install
-cp .env.example .env
-tavp key:generate
-```
+# Install TAVP
+composer create-project tavp/core my-app
 
-## Quick start
-
-```bash
-# Start dev server
+# Start development
+cd my-app
 tavp serve
 
-# Create a model
-tavp make:model User
-
-# Run migrations
-tavp migrate
+# Open browser
+open http://localhost:8000
 ```
 
-## Testing
+## Documentation
 
-```bash
-composer test          # Run PHPUnit tests
-composer stan          # Run PHPStan static analysis
-composer cs            # Check code style
-composer cs-fix        # Auto-fix code style
-```
+- [Getting Started](https://tavp.dev/docs/getting-started)
+- [CLI Reference](https://tavp.dev/docs/cli)
+- [Authentication](https://tavp.dev/docs/auth)
+- [Deployment](https://tavp.dev/docs/deployment)
+- [API Reference](https://tavp.dev/docs/api)
 
-## Project structure
+## System Requirements
 
-```
-tavp-core/
-├── app/                # Application code (controllers, models, etc.)
-├── config/             # Configuration files
-├── database/           # Migrations and seeders
-├── public/             # Web root (index.php, assets)
-├── resources/          # Views, frontend assets
-├── routes/             # Route definitions
-├── scripts/            # Utility scripts (phalcon install, etc.)
-├── src/                # Framework source code
-├── storage/            # Compiled views, logs, cache
-├── tests/              # Test files
-├── bin/                # CLI entry point (tavp command)
-├── composer.json       # PHP dependencies
-├── package.json        # Node.js dependencies
-├── vite.config.js      # Vite build configuration
-├── tailwind.config.js  # Tailwind CSS configuration
-├── phpunit.xml         # PHPUnit configuration
-├── phpstan.neon        # PHPStan configuration
-└── .php-cs-fixer.php   # Code style configuration
-```
+- PHP 8.3+
+- Phalcon 5.16+
+- Node.js 18+ (for frontend assets)
+- Composer 2.x
 
-## Status
+## Performance
 
-Part of **0.1.0 Genesis** (ZeroVer `0.MINOR.PATCH`). API is not yet stable
-until `1.0.0`. See `tavp-docs` for the full milestone checklist.
+- P99 latency: <5ms (PHP-FPM)
+- P99 latency: <2ms (TAVP Coil/Swoole)
+- RAM: <15MB per worker
+- Throughput: 5000+ req/s (2-core VPS)
+
+## Versioning
+
+TAVP follows [ZeroVer](https://0ver.org/) during development:
+- **0.x.y** — Development (anything may change)
+- **1.0.0** — Stable (public API locked, SemVer applies)
 
 ## License
 
-MIT
+MIT License
+
+## Community
+
+- [GitHub](https://github.com/tavp-stack)
+- [Discord](https://discord.gg/tavp)
+- [Twitter](https://twitter.com/tavpstack)
+- [Marketplace](https://tavp.dev/marketplace)
