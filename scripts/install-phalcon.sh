@@ -1,14 +1,14 @@
 #!/bin/sh
 #
-# install-phalcon.sh — Install Phalcon 5.x on any Debian/Ubuntu-based
+# install-phalcon.sh - Install Phalcon 5.x on any Debian/Ubuntu-based
 # system (Lando container, VPS, Docker) with a single command.
 #
 # Dispatched by: tavp phalcon:install
 #
 # Usage:
-#   sudo bash install-phalcon.sh            # auto-detect PHP version
-#   sudo bash install-phalcon.sh 8.3        # pin a PHP version
-#   sudo bash install-phalcon.sh 8.3 5.16.0 # pin PHP + Phalcon version
+#   sudo sh install-phalcon.sh            # auto-detect PHP version
+#   sudo sh install-phalcon.sh 8.3        # pin a PHP version
+#   sudo sh install-phalcon.sh 8.3 5.16.0 # pin PHP + Phalcon version
 #
 # Idempotent: exits early if Phalcon is already loaded.
 #
