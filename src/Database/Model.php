@@ -39,6 +39,22 @@ abstract class Model extends PhalconModel
     protected array $casts = [];
 
     /**
+     * Enable automatic created_at/updated_at timestamps.
+     */
+    protected bool $timestamps = true;
+
+    /**
+     * Enable soft deletes (adds deleted_at column).
+     */
+    protected bool $softDeletes = false;
+
+    /**
+     * Reusable query scopes.
+     * @var array<string, callable>
+     */
+    protected array $scopes = [];
+
+    /**
      * Tell Phalcon which table this model maps to.
      */
     public function getSource(): string
@@ -92,6 +108,26 @@ abstract class Model extends PhalconModel
     }
 
     /**
+     * Find first record matching conditions.
+     */
+    public static function first(): ?static
+    {
+        return static::findFirst([
+            'order' => static::getPrimaryKey() . ' DESC',
+        ]);
+    }
+
+    /**
+     * Get the primary key name.
+     */
+    public static function getPrimaryKey(): string
+    {
+        $model = new static();
+
+        return $model->primaryKey;
+    }
+
+    /**
      * Apply attribute casting when filling or reading.
      */
     protected function castAttribute(string $key, mixed $value): mixed
@@ -105,5 +141,100 @@ abstract class Model extends PhalconModel
             'json' => is_string($value) ? json_decode($value, true) : $value,
             default => $value,
         };
+    }
+
+    /**
+     * Auto-set timestamps on create/update.
+     */
+    public function beforeCreate(): void
+    {
+        if ($this->timestamps) {
+            $now = date('Y-m-d H:i:s');
+            $this->created_at = $now;
+            $this->updated_at = $now;
+        }
+    }
+
+    public function beforeUpdate(): void
+    {
+        if ($this->timestamps) {
+            $this->updated_at = date('Y-m-d H:i:s');
+        }
+    }
+
+    /**
+     * Soft delete: set deleted_at instead of removing the row.
+     */
+    public function delete(): bool
+    {
+        if ($this->softDeletes) {
+            $this->deleted_at = date('Y-m-d H:i:s');
+
+            return $this->update();
+        }
+
+        return parent::delete();
+    }
+
+    /**
+     * Scope: exclude soft-deleted records.
+     */
+    public function scopeWithoutSoftDeletes(QueryBuilder $query): QueryBuilder
+    {
+        if ($this->softDeletes) {
+            $query->where('deleted_at', '=', null);
+        }
+
+        return $query;
+    }
+
+    /**
+     * Scope: include only soft-deleted records.
+     */
+    public function scopeOnlySoftDeletes(QueryBuilder $query): QueryBuilder
+    {
+        if ($this->softDeletes) {
+            $query->where('deleted_at', '!=', null);
+        }
+
+        return $query;
+    }
+
+    /**
+     * Restore a soft-deleted record.
+     */
+    public function restore(): bool
+    {
+        if ($this->softDeletes) {
+            $this->deleted_at = null;
+
+            return $this->update();
+        }
+
+        return true;
+    }
+
+    /**
+     * Check if model is soft-deleted.
+     */
+    public function trashed(): bool
+    {
+        return $this->softDeletes && $this->deleted_at !== null;
+    }
+
+    /**
+     * Get all records.
+     */
+    public static function all(): array
+    {
+        return static::find() ?: [];
+    }
+
+    /**
+     * Count records.
+     */
+    public static function count(array $parameters = []): int
+    {
+        return (int) parent::count($parameters);
     }
 }
