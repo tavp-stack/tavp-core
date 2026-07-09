@@ -16,7 +16,11 @@
 if [ -n "${1:-}" ]; then
     PHP_VERSION="$1"
 else
-    PHP_VERSION="$(php -r 'echo PHP_MAJOR_VERSION . "." . PHP_MINOR_VERSION;' 2>/dev/null || echo 8.3)"
+    # Suppress PHP startup warnings (e.g. missing phalcon.so) to get clean output
+    PHP_VERSION="$(php -r 'echo PHP_MAJOR_VERSION . "." . PHP_MINOR_VERSION;' 2>/dev/null)"
+    if [ -z "$PHP_VERSION" ]; then
+        PHP_VERSION="8.3"
+    fi
 fi
 PHALCON_VERSION="${2:-5.16.0}"
 
@@ -103,7 +107,7 @@ cd "${WORKDIR}"
 wget -q "https://github.com/phalcon/cphalcon/releases/download/v${PHALCON_VERSION}/phalcon-pecl.tgz" \
     -O phalcon.tgz
 tar -xzf phalcon.tgz
-BUILD_DIR="$(find "${WORKDIR}" -maxdepth 1 -type d -name 'cphalcon*' | head -1)"
+BUILD_DIR="$(find "${WORKDIR}" -maxdepth 1 -type d -name 'phalcon*' | head -1)"
 [ -n "${BUILD_DIR}" ] || BUILD_DIR="${WORKDIR}"
 cd "${BUILD_DIR}"
 
@@ -118,7 +122,7 @@ echo "==> Installing extension..."
 make install
 
 EXT_DIR="$(${PHPCONFIG} --extension-dir)"
-INI_DIR="$(${PHPCONFIG} --ini-dir 2>/dev/null || echo /usr/local/lib/php/extensions/no-debug-non-zts-20230831)"
+INI_DIR="$(${PHPCONFIG} --ini-dir 2>/dev/null || echo "${EXT_DIR}")"
 mkdir -p "${INI_DIR}"
 cat > "${INI_DIR}/30-phalcon.ini" <<EOF
 extension=phalcon.so
