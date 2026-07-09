@@ -1,28 +1,85 @@
+# ============================================
+# TAVP Core - Lando Stack Configuration
+# ============================================
+#
+# Usage:
+#   lando start     - Start all services
+#   lando tavp      - Run the tavp CLI
+#   lando composer  - Run composer commands
+#   lando php       - Run php commands
+#   lando artisan   - (alias) php bin/tavp
+#
+# App:         http://tavp-core.lndo.site
+# Mailpit:     http://mail.tavp-core.lndo.site   (OTP inbox)
+# phpMyAdmin:  http://pma.tavp-core.lndo.site
+
 name: tavp-core
 recipe: lamp
 config:
   php: '8.3'
   webroot: public
-  database: mysql
+  database: mariadb:10.11
+  # Install Phalcon 5.16 (latest stable) at build time.
   build_as_root:
     - apt-get update
-    - apt-get install -y software-properties-common unzip
-    - add-apt-repository ppa:ondrej/php -y
-    - apt-get update
-    - apt-get install -y php8.3-phalcon
-  via: apache
+    - apt-get install -y git unzip libzip-dev autoconf build-essential php8.3-dev php-pear
+    - pecl install phalcon-5.16.0
+    - echo "extension=phalcon.so" > /usr/local/etc/php/conf.d/phalcon.ini
+
 services:
-  node:
-    type: node:20
+  appserver:
+    type: php:8.3
+    webroot: public
+    overrides:
+      environment:
+        TZ: Asia/Jakarta
+        PHP_OPCACHE_ENABLE: "1"
+        MAIL_HOST: tavp-core-mailpit
+        MAIL_PORT: "1025"
+
   database:
-    portforward: true
+    type: mariadb:10.11
+    portforward: 33306
     creds:
       user: tavp
       password: tavp
       database: tavp
+
+  cache:
+    type: redis
+    portforward: 36379
+
+  # Unique service name so OTP emails land in THIS project's Mailpit only.
+  tavp-core-mailpit:
+    type: mailpit
+    overrides:
+      ports:
+        - "0.0.0.0:8226:8025"    # Web UI (host:8226 -> container:8025)
+        - "0.0.0.0:1226:1025"    # SMTP   (host:1226 -> container:1025)
+
+  phpmyadmin:
+    type: phpmyadmin
+    hosts:
+      - database
+
+proxy:
+  appserver:
+    - tavp-core.lndo.site
+  tavp-core-mailpit:
+    - mail.tavp-core.lndo.site
+  phpmyadmin:
+    - pma.tavp-core.lndo.site
+
 tooling:
   tavp:
     service: appserver
     cmd: php bin/tavp
   composer:
     service: appserver
+    cmd: composer
+  php:
+    service: appserver
+    cmd: php
+  artisan:
+    service: appserver
+    cmd: php bin/tavp

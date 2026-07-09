@@ -18,4 +18,12 @@ return [
         'access_ttl_minutes' => 15,
         'refresh_ttl_days' => 30,
     ],
+
+    // Mail driver for delivering OTP codes. In Lando this points at the
+    // project's own Mailpit container so OTPs never leak to other projects.
+    'mail' => [
+        'driver' => env('MAIL_DRIVER', 'smtp'),
+        'host' => env('MAIL_HOST', 'tavp-core-mailpit'),
+        'port' => env('MAIL_PORT', 1025),
+    ],
 ];
