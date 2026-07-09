@@ -1,40 +1,53 @@
-{
-    "name": "tavp/core",
-    "description": "TAVP Stack core framework — Tailwind + Alpine + Volt + Phalcon, with a Laravel-style ergonomic layer on top of Phalcon.",
-    "type": "library",
-    "license": "MIT",
-    "keywords": ["tavp", "phalcon", "tailwind", "alpine", "volt", "framework"],
-    "require": {
-        "php": ">=8.1",
-        "symfony/console": "^6.0 || ^7.0"
-    },
-    "suggest": {
-        "ext-phalcon": "The Phalcon 5 C-extension. Install it with: tavp phalcon:install"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "^10.0",
-        "phpstan/phpstan": "^1.10",
-        "friendsofphp/php-cs-fixer": "^3.40"
-    },
-    "autoload": {
-        "psr-4": {
-            "Tavp\\Core\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Tavp\\Core\\Tests\\": "tests/"
-        }
-    },
-    "scripts": {
-        "test": "phpunit",
-        "stan": "phpstan analyse",
-        "cs": "php-cs-fixer fix --dry-run --diff",
-        "cs-fix": "php-cs-fixer fix"
-    },
-    "config": {
-        "sort-packages": true,
-        "allow-plugins": {}
-    },
-    "minimum-stability": "stable"
+﻿{
+    "name":  "tavp/core",
+    "description":  "TAVP Stack core framework â€” Tailwind + Alpine + Volt + Phalcon, with a Laravel-style ergonomic layer on top of Phalcon.",
+    "type":  "library",
+    "license":  "MIT",
+    "keywords":  [
+                     "tavp",
+                     "phalcon",
+                     "tailwind",
+                     "alpine",
+                     "volt",
+                     "framework"
+                 ],
+    "require":  {
+                    "php":  "\u003e=8.1",
+                    "symfony/console":  "^6.0 || ^7.0"
+                },
+    "suggest":  {
+                    "ext-phalcon":  "The Phalcon 5 C-extension. Install it with: tavp phalcon:install"
+                },
+    "require-dev":  {
+                        "phpunit/phpunit":  "^10.0",
+                        "phpstan/phpstan":  "^1.10",
+                        "friendsofphp/php-cs-fixer":  "^3.40"
+                    },
+    "autoload":  {
+                     "psr-4":  {
+                                   "Tavp\\Core\\":  "src/"
+                               }
+                 },
+    "autoload-dev":  {
+                         "psr-4":  {
+                                       "Tavp\\Core\\Tests\\":  "tests/"
+                                   }
+                     },
+    "scripts":  {
+                    "test":  "phpunit",
+                    "stan":  "phpstan analyse",
+                    "cs":  "php-cs-fixer fix --dry-run --diff",
+                    "cs-fix":  "php-cs-fixer fix"
+                },
+    "config":  {
+                   "sort-packages":  true,
+                   "allow-plugins":  {
+
+                                     }
+               },
+    "minimum-stability":  "stable",
+    "support":  {
+                    "issues":  "https://github.com/tavp-stack/tavp-core/issues",
+                    "source":  "https://github.com/tavp-stack/tavp-core"
+                }
 }
