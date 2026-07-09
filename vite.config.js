@@ -1,18 +1,29 @@
 import { defineConfig } from 'vite';
 
-// Vite build pipeline for TAVP Core frontend assets.
 export default defineConfig({
-    build: {
-        manifest: true,
-        outDir: 'public/build',
-        rollupOptions: {
-            input: [
-                'resources/assets/js/app.js',
-                'resources/assets/css/app.css',
-            ],
+    plugins: [],
+    server: {
+        host: '0.0.0.0',
+        port: 5173,
+        proxy: {
+            'http://localhost:9000': {
+                target: 'http://0.0.0.0:8000',
+                changeOrigin: true,
+            },
+        },
+        hmr: {
+            host: '0.0.0.0',
+            port: 5173,
         },
     },
-    server: {
-        port: 5173,
+    build: {
+        outDir: 'public/build',
+        manifest: true,
+        rollupOptions: {
+            input: [
+                'resources/js/app.js',
+                'resources/css/app.css',
+            ],
+        },
     },
 });

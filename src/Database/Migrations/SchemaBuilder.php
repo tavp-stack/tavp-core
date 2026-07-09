@@ -6,6 +6,8 @@ namespace Tavp\Core\Database\Migrations;
 
 use Phalcon\Db\Adapter\AdapterInterface;
 use Phalcon\Db\Column;
+use Phalcon\Db\Reference;
+use Phalcon\Db\ReferenceInterface;
 
 /**
  * A readable schema builder for migrations.
@@ -26,11 +28,17 @@ class SchemaBuilder
     public function createTable(string $table, callable $definition): void
     {
         $columns = [];
-        $definition(new TableDefinition($columns));
+        $references = [];
+        $def = new TableDefinition($columns, $references);
+        $definition($def);
 
-        $this->connection->createTable($table, null, [
-            'columns' => $columns,
-        ]);
+        $options = ['columns' => $columns];
+
+        if (!empty($references)) {
+            $options['references'] = $references;
+        }
+
+        $this->connection->createTable($table, null, $options);
     }
 
     /**
@@ -41,6 +49,58 @@ class SchemaBuilder
         if ($this->connection->tableExists($table)) {
             $this->connection->dropTable($table);
         }
+    }
+
+    /**
+     * Add a foreign key constraint to an existing table.
+     */
+    public function addForeignKey(
+        string $table,
+        string $column,
+        string $referencedTable,
+        string $referencedColumn,
+        string $onDelete = 'RESTRICT',
+        string $onUpdate = 'RESTRICT'
+    ): void {
+        $reference = new Reference([
+            'referencedTable' => $referencedTable,
+            'columns' => [$column],
+            'referencedColumns' => [$referencedColumn],
+            'onDelete' => $onDelete,
+            'onUpdate' => $onUpdate,
+        ]);
+
+        $this->connection->addForeignKey($table, null, $reference);
+    }
+
+    /**
+     * Drop a foreign key constraint.
+     */
+    public function dropForeignKey(string $table, string $constraintName): void
+    {
+        $this->connection->dropForeignKey($table, null, $constraintName);
+    }
+
+    /**
+     * Add an index to a table.
+     */
+    public function addIndex(string $table, array $columns, ?string $name = null, bool $unique = false): void
+    {
+        $indexName = $name ?: 'idx_' . $table . '_' . implode('_', $columns);
+
+        $this->connection->addIndex($table, null, [
+            'fields' => $columns,
+            'name' => $indexName,
+            'unique' => $unique,
+        ]);
+    }
+
+    /**
+     * Drop an index from a table.
+     */
+    public function dropIndex(string $table, string $indexName): void
+    {
+        $this->connection->dropIndex($table, null, $indexName);
     }
 
     /**
@@ -77,16 +137,37 @@ class SchemaBuilder
 }
 
 /**
- * Collects column definitions inside a createTable() closure.
+ * Collects column definitions and foreign keys inside a createTable() closure.
  */
 class TableDefinition
 {
-    public function __construct(public array &$columns)
-    {
+    public function __construct(
+        public array &$columns,
+        public array &$references
+    ) {
     }
 
     public function add(array $column): void
     {
         $this->columns[] = $column;
+    }
+
+    /**
+     * Add a foreign key constraint inline.
+     */
+    public function foreignKey(
+        string $column,
+        string $referencedTable,
+        string $referencedColumn = 'id',
+        string $onDelete = 'RESTRICT',
+        string $onUpdate = 'RESTRICT'
+    ): void {
+        $this->references[] = new Reference([
+            'referencedTable' => $referencedTable,
+            'columns' => [$column],
+            'referencedColumns' => [$referencedColumn],
+            'onDelete' => $onDelete,
+            'onUpdate' => $onUpdate,
+        ]);
     }
 }
