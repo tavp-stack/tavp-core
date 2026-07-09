@@ -15,9 +15,6 @@ class PhalconInstallCommand
 {
     public function handle(array $args): void
     {
-        $phpVersion = $args[0] ?? '';
-        $phalconVersion = $args[1] ?? '5.16.0';
-
         $script = dirname(__DIR__, 2) . '/scripts/install-phalcon.sh';
 
         if (!is_file($script)) {
@@ -26,10 +23,19 @@ class PhalconInstallCommand
             return;
         }
 
-        $arg = ($phpVersion !== '' ? escapeshellarg($phpVersion) : '')
-            . ' ' . escapeshellarg($phalconVersion);
-
         echo "Running Phalcon installer...\n";
-        passthru('sh ' . escapeshellarg($script) . ' ' . $arg);
+
+        // Build argument string: only pass args that are actually provided.
+        // Empty strings must NOT be passed because shell ${1:-default}
+        // only triggers on unset, not empty.
+        $arg = '';
+        if (isset($args[0]) && $args[0] !== '') {
+            $arg .= escapeshellarg($args[0]);
+        }
+        if (isset($args[1]) && $args[1] !== '') {
+            $arg .= ' ' . escapeshellarg($args[1]);
+        }
+
+        passthru('sh ' . escapeshellarg($script) . $arg);
     }
 }

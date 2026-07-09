@@ -15,7 +15,12 @@
 # Note: intentionally avoid 'set -eu' for maximum shell compatibility
 # (Lando, Docker, VPS may use dash/ash which have limited options).
 
-PHP_VERSION="${1:-$(php -r 'echo PHP_MAJOR_VERSION . "." . PHP_MINOR_VERSION;' 2>/dev/null || echo 8.3)}"
+# Auto-detect PHP version if not provided as argument
+if [ -n "${1:-}" ]; then
+    PHP_VERSION="$1"
+else
+    PHP_VERSION="$(php -r 'echo PHP_MAJOR_VERSION . "." . PHP_MINOR_VERSION;' 2>/dev/null || echo 8.3)"
+fi
 PHALCON_VERSION="${2:-5.16.0}"
 
 echo "==> TAVP Phalcon installer"
