@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 #
 # install-phalcon.sh — Install Phalcon 5.x on any Debian/Ubuntu-based
 # system (Lando container, VPS, Docker) with a single command.
@@ -12,7 +12,8 @@
 #
 # Idempotent: exits early if Phalcon is already loaded.
 #
-set -eu
+# Note: intentionally avoid 'set -eu' for maximum shell compatibility
+# (Lando, Docker, VPS may use dash/ash which have limited options).
 
 PHP_VERSION="${1:-$(php -r 'echo PHP_MAJOR_VERSION . "." . PHP_MINOR_VERSION;' 2>/dev/null || echo 8.3)}"
 PHALCON_VERSION="${2:-5.16.0}"
