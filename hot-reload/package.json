@@ -1,0 +1,15 @@
+{
+    "name": "tavp-hot-reload",
+    "version": "0.1.0",
+    "description": "Hot reload server for TAVP development",
+    "main": "server.js",
+    "scripts": {
+        "start": "node server.js",
+        "dev": "node server.js --dev"
+    },
+    "dependencies": {
+        "chokidar": "^3.6.0",
+        "livereload": "^0.9.3",
+        "express": "^4.21.0"
+    }
+}
