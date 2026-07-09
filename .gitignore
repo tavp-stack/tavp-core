@@ -1,23 +1,26 @@
 ﻿# Dependencies
 /vendor/
-composer.phar
+/node_modules/
+
+# Build output
+/public/build/
+/storage/compiled/*
+!/storage/compiled/.gitkeep
+/storage/cache/*
+!/storage/cache/.gitkeep
+/storage/logs/*
+!/storage/logs/.gitkeep
 
 # Environment
 .env
-.env.backup
-.php-cs-fixer.cache
+.env.local
+.tavp.json.local
 
-# Logs
-*.log
-npm-debug.log
+# Local overrides
+.tavp.json.local
 
-# OS / Editor
-.DS_Store
-Thumbs.db
+# Editor / OS
 .idea/
 .vscode/
-*.swp
-
-# Build
-node_modules/
-dist/
+.DS_Store
+*.log

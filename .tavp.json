@@ -1,0 +1,10 @@
+{
+    "name": "tavp-core",
+    "version": "0.1.0",
+    "template": "library",
+    "env": "lando",
+    "php": ">=8.1",
+    "phalcon": "^5.0",
+    "modules": [],
+    "created": "2026-07-09"
+}

@@ -1,0 +1,13 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+// The TAVP command line entry point.
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use Tavp\Core\Console\TavpCommand;
+
+$command = new TavpCommand();
+$command->run($argv);

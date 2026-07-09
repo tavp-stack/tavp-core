@@ -1,40 +1,44 @@
 # tavp-core
 
-Scaffold / fondasi dasar dari **TAVP Stack**. Repo ini yang jadi titik awal
-setiap project baru: sudah menggabungkan **Tailwind + Alpine + Volt + Phalcon**
-jadi satu kesatuan yang rapi.
+The heart of the **TAVP Stack** — **Tailwind + Alpine + Volt + Phalcon**,
+with a Laravel-style ergonomic layer on top of Phalcon's C-extension speed.
 
-## Isi
+> "As fast as Phalcon, as pleasant as Laravel."
 
-Inti framework TAVP:
+## What this repo contains
 
-- Router
-- Controller
-- Volt (templating, pengganti Blade)
-- ORM (basis Phalcon ORM + wrapper ala Eloquent)
-- Migration system (gaya Laravel: up/down, rollback, fresh, status)
-- Validation (FormRequest, rule-based)
-- Middleware
-- Dependency Injection (DI)
-- Config & Helpers
-- Exception handler
+`tavp-core` is the framework foundation every TAVP project is built on:
 
-## Kenapa begini
+- **Bootstrap & DI** — `Application`, `Kernel`, service container
+- **Routing** — `Route::get/post/resource`, groups, middleware, named routes
+- **Controllers** — `BaseController`, `ApiController`, request/response wrappers
+- **Volt templating** — inheritance, partials, macros, auto-escaping
+- **ORM wrapper** — thin Eloquent-style layer over native Phalcon models
+- **Migrations** — Laravel-style `up/down`, rollback, fresh, status
+- **Middleware, Validation, Exceptions** — CSRF, auth, throttle, FormRequest
+- **Helpers** — `asset()`, `url()`, `route()`, `csrf_token()`, `old()`, `session()`
 
-Phalcon itu C-extension, jadi jauh lebih kenceng & irit RAM dari framework
-PHP biasa. TAVP nambahin lapisan di atasnya biar pengalaman ngodingnya
-seenak Laravel, tapi eksekusinya sekilat Phalcon.
+## Requirements
+
+- PHP 8.1+
+- Phalcon 5.x (C-extension)
+- Composer
+- Node.js 18+ (for frontend assets)
+
+## Install (development)
+
+```bash
+composer install
+npm install
+cp .env.example .env
+tavp key:generate
+```
 
 ## Status
 
-Planning. Belum ada kode, baru struktur & konvensi.
+Part of **0.1.0 Genesis** (ZeroVer `0.MINOR.PATCH`). API is not yet stable
+until `1.0.0`. See `tavp-docs` for the full milestone checklist.
 
-## Cara pakai (rencana)
+## License
 
-```
-tavp new nama-project
-cd nama-project
-tavp migrate
-```
-
-Lihat `tavp-cli` untuk command-nya.
+MIT
