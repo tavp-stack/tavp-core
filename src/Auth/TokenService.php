@@ -58,7 +58,15 @@ class TokenService
             return null;
         }
 
-        // In production, verify the signature (HMAC) against $this->secret.
+        // Verify HMAC signature
+        $expectedSignature = base64_encode(
+            hash_hmac('sha256', "{$parts[0]}.{$parts[1]}", $this->secret, true)
+        );
+
+        if (!hash_equals($expectedSignature, $parts[2])) {
+            return null;
+        }
+
         return $payload;
     }
 

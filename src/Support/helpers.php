@@ -62,3 +62,56 @@ if (!function_exists('app')) {
         return $service === null ? $app : $app->getService($service);
     }
 }
+
+if (!function_exists('route')) {
+    /**
+     * Generate a URL for a named route.
+     *
+     * route('home')                     → "/"
+     * route('users.show', ['id' => 1])  → "/users/1"
+     */
+    function route(string $name, array $parameters = []): string
+    {
+        $router = app('router');
+
+        if ($router === null) {
+            return '/';
+        }
+
+        /** @var \Tavp\Core\Routing\Router $router */
+        $routes = $router->getRoutes();
+
+        foreach ($routes as $route) {
+            if (($route['name'] ?? null) !== $name) {
+                continue;
+            }
+
+            $uri = $route['uri'];
+
+            foreach ($parameters as $key => $value) {
+                $uri = str_replace('{' . $key . '}', (string) $value, $uri);
+            }
+
+            return $uri;
+        }
+
+        return '/';
+    }
+}
+
+if (!function_exists('view')) {
+    /**
+     * Render a view template from a controller or anywhere.
+     */
+    function view(string $template, array $data = []): string
+    {
+        $viewFactory = app('view');
+
+        if ($viewFactory === null) {
+            return "<!-- View service not available: {$template} -->";
+        }
+
+        /** @var \Tavp\Core\View\ViewFactory $viewFactory */
+        return $viewFactory->render($template, $data);
+    }
+}

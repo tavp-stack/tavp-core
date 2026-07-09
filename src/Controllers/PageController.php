@@ -24,4 +24,15 @@ class PageController extends BaseController
     {
         return $this->view('contact');
     }
+
+    public function dashboard(): string
+    {
+        return $this->view('dashboard', [
+            'title' => 'Dashboard',
+            'user' => [
+                'name' => 'User',
+                'email' => 'user@example.com',
+            ],
+        ]);
+    }
 }

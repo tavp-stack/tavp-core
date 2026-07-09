@@ -6,21 +6,99 @@ namespace Tavp\Core\Console;
 
 /**
  * tavp make:migration — generate a new migration file.
+ *
+ * Usage: tavp make:migration <CreateTable> [--table=name]
  */
 class MakeMigrationCommand
 {
     public function handle(array $args): void
     {
-        $name = $args[0] ?? 'CreateTable';
-        $fileName = date('Y_m_d_His') . '_' . $this->toSnake($name) . '.php';
+        $name = $args[0] ?? null;
 
-        echo "Created migration: database/migrations/{$fileName}\n";
+        if ($name === null) {
+            echo "Usage: tavp make:migration <Name>\n";
+            return;
+        }
+
+        $tableName = $this->extractTable($args) ?? $this->pluralize($this->toSnake($name));
+
+        $fileName = date('Y_m_d_His') . '_' . $this->toSnake($name) . '.php';
+        $migrationClass = 'create_' . $tableName;
+
+        $content = <<<PHP
+<?php
+
+declare(strict_types=1);
+
+use Tavp\Core\Database\Migrations\Migration;
+use Tavp\Core\Database\Migrations\SchemaBuilder;
+
+return new class extends Migration
+{
+    public function up(SchemaBuilder \$schema): void
+    {
+        \$schema->createTable('{$tableName}', function (SchemaBuilder\TableDefinition \$table) {
+            \$table->add(\$schema->column('id', 'bigInteger', ['identity' => true, 'primary' => true]));
+            \$table->add(\$schema->column('name', 'string'));
+            \$table->add(\$schema->column('created_at', 'timestamp'));
+            \$table->add(\$schema->column('updated_at', 'timestamp'));
+        });
     }
 
-    private function toSnake(string $name): string
+    public function down(SchemaBuilder \$schema): void
     {
-        $result = preg_replace('/(?<!^)[A-Z]/', '_$0', $name);
+        \$schema->dropTable('{$tableName}');
+    }
+};
+
+PHP;
+
+        $path = base_path('database/migrations/' . $fileName);
+
+        if (file_exists($path)) {
+            echo "  Migration {$fileName} already exists. Skipping.\n";
+            return;
+        }
+
+        file_put_contents($path, $content);
+        echo "  Created database/migrations/{$fileName}\n";
+    }
+
+    private function extractTable(array $args): ?string
+    {
+        foreach ($args as $arg) {
+            if (str_starts_with($arg, '--table=')) {
+                return substr($arg, 8);
+            }
+        }
+
+        return null;
+    }
+
+    private function toSnake(string $value): string
+    {
+        $result = preg_replace('/(?<!^)[A-Z]/', '_$0', $value);
 
         return strtolower((string) $result);
+    }
+
+    private function pluralize(string $value): string
+    {
+        $irregular = ['person' => 'people', 'man' => 'men', 'woman' => 'women'];
+
+        if (isset($irregular[$value])) {
+            return $irregular[$value];
+        }
+
+        if (str_ends_with($value, 'y') && !in_array(substr($value, -2, 1), ['a', 'e', 'i', 'o', 'u'], true)) {
+            return substr($value, 0, -1) . 'ies';
+        }
+
+        if (str_ends_with($value, 's') || str_ends_with($value, 'x') || str_ends_with($value, 'z')
+            || str_ends_with($value, 'ch') || str_ends_with($value, 'sh')) {
+            return $value . 'es';
+        }
+
+        return $value . 's';
     }
 }

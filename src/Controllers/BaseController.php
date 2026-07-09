@@ -23,20 +23,11 @@ abstract class BaseController
     }
 
     /**
-     * Render a Volt view template (implemented in the Volt layer).
-     * For now it returns a simple HTML string as a placeholder.
+     * Render a Volt view template using the global view() helper.
      */
     protected function view(string $template, array $data = []): string
     {
-        // The Volt integration (Fase 1, VLT) will compile and render
-        // the template. Until then we return a readable placeholder.
-        $dataString = http_build_query($data);
-
-        return sprintf(
-            '<!-- View: %s -->' . "\n" . '<p>Rendered with data: %s</p>',
-            htmlspecialchars($template),
-            htmlspecialchars($dataString)
-        );
+        return \view($template, $data);
     }
 
     /**

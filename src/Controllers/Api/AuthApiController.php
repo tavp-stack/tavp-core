@@ -50,4 +50,27 @@ class AuthApiController extends ApiController
 
         return $this->success($tokens);
     }
+
+    public function refresh(): \Tavp\Core\Http\Response
+    {
+        $request = new Request();
+        $refreshToken = $request->input('refresh_token', '');
+
+        if ($refreshToken === '') {
+            return $this->error('Refresh token is required.', 422);
+        }
+
+        /** @var \Tavp\Core\Auth\TokenService $tokenService */
+        $tokenService = app('tokens');
+        $payload = $tokenService->decode($refreshToken);
+
+        if ($payload === null || ($payload['type'] ?? '') !== 'refresh') {
+            return $this->error('Invalid refresh token.', 401);
+        }
+
+        $userId = (int) $payload['sub'];
+        $tokens = $tokenService->createTokenPair($userId);
+
+        return $this->success($tokens);
+    }
 }
