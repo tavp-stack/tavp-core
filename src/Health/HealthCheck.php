@@ -5,41 +5,78 @@ declare(strict_types=1);
 namespace Tavp\Core\Health;
 
 /**
- * Application health endpoint data.
- *
- * Reports status of database, cache and queue so load balancers and
- * uptime monitors can verify the app is healthy.
+ * Health check endpoint — verify all services are operational.
  */
 class HealthCheck
 {
-    /**
-     * @param array<string, bool> $checks
-     */
-    public function __construct(private array $checks = [])
-    {
-    }
-
-    public function addCheck(string $name, bool $healthy): void
-    {
-        $this->checks[$name] = $healthy;
-    }
+    private array $checks = [];
+    private array $results = [];
 
     /**
-     * Return the health payload and overall status.
+     * Register a health check.
      */
-    public function report(): array
+    public function check(string $name, callable $callback): void
     {
-        $healthy = !in_array(false, $this->checks, true);
+        $this->checks[$name] = $callback;
+    }
+
+    /**
+     * Run all health checks.
+     */
+    public function run(): array
+    {
+        $this->results = [];
+        $healthy = true;
+
+        foreach ($this->checks as $name => $callback) {
+            $start = microtime(true);
+
+            try {
+                $result = $callback();
+                $status = $result ? 'pass' : 'fail';
+            } catch (\Throwable $e) {
+                $result = $e->getMessage();
+                $status = 'fail';
+                $healthy = false;
+            }
+
+            $this->results[$name] = [
+                'status' => $status,
+                'message' => is_string($result) ? $result : ($status === 'pass' ? 'OK' : 'Failed'),
+                'time_ms' => round((microtime(true) - $start) * 1000, 2),
+            ];
+
+            if ($status === 'fail') {
+                $healthy = false;
+            }
+        }
 
         return [
-            'status' => $healthy ? 'ok' : 'degraded',
-            'checks' => $this->checks,
-            'time' => date('c'),
+            'status' => $healthy ? 'healthy' : 'unhealthy',
+            'timestamp' => date('c'),
+            'checks' => $this->results,
         ];
     }
 
-    public function isHealthy(): bool
+    /**
+     * Get check results as JSON.
+     */
+    public function toJson(): string
     {
-        return !in_array(false, $this->checks, true);
+        $results = $this->run();
+        http_response_code($results['status'] === 'healthy' ? 200 : 503);
+        header('Content-Type: application/json');
+        return json_encode($results, JSON_PRETTY_PRINT);
+    }
+
+    /**
+     * Get check results as HTTP response.
+     */
+    public function respond(): void
+    {
+        $results = $this->run();
+        http_response_code($results['status'] === 'healthy' ? 200 : 503);
+        header('Content-Type: application/json');
+        echo json_encode($results, JSON_PRETTY_PRINT);
     }
 }

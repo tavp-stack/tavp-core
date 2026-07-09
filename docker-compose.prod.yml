@@ -1,0 +1,80 @@
+# TAVP Stack — Production Docker Compose
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tavp-app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
+      - storage:/var/www/html/storage
+    environment:
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - DB_CONNECTION=mysql
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=${DB_DATABASE:-tavp}
+      - DB_USERNAME=${DB_USERNAME:-tavp_user}
+      - DB_PASSWORD=${DB_PASSWORD:-secret}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - db
+      - redis
+    networks:
+      - tavp-network
+
+  nginx:
+    image: nginx:alpine
+    container_name: tavp-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - .:/var/www/html
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf
+      - storage:/var/www/html/storage
+      - certs:/etc/nginx/certs
+    depends_on:
+      - app
+    networks:
+      - tavp-network
+
+  db:
+    image: mysql:8.0
+    container_name: tavp-db
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD:-rootsecret}
+      - MYSQL_DATABASE=${DB_DATABASE:-tavp}
+      - MYSQL_USER=${DB_USERNAME:-tavp_user}
+      - MYSQL_PASSWORD=${DB_PASSWORD:-secret}
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - tavp-network
+
+  redis:
+    image: redis:alpine
+    container_name: tavp-redis
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data
+    networks:
+      - tavp-network
+
+volumes:
+  storage:
+  db-data:
+  redis-data:
+  certs:
+
+networks:
+  tavp-network:
+    driver: bridge

@@ -1,11 +1,29 @@
-parameters:
-    level: 6
-    paths:
-        - src
-    excludePaths:
-        - src/Support/Compiled.php
-    ignoreErrors:
-        # Phalcon extension classes are not statically analysable by PHPStan.
-        - '#Class Phalcon\\.* not found#'
-        - '#Access to undefined method Phalcon\\.*#'
-    treatPhpDocTypesAsCertain: false
+<?php
+
+return [
+    'paths' => [
+        'analyse' => [
+            '%projectDir%/app',
+            '%projectDir%/src',
+        ],
+        'excludeDirectories' => [
+            '%projectDir%/vendor',
+            '%projectDir%/node_modules',
+            '%projectDir%/storage',
+            '%projectDir%/tests',
+        ],
+        'fileExtensions' => [
+            'php',
+        ],
+    ],
+
+    'level' => 8,
+
+    'rules' => [
+        // @phpstan-ignore-next-line
+    ],
+
+    'parameters' => [
+        'ignoreErrors' => [],
+    ],
+];
