@@ -27,10 +27,10 @@ class MigrateCommand
         }
 
         match ($mode) {
-            'up' => echo "Running migrations...\n  (no pending migrations)\n",
-            'rollback' => echo "Rolling back last batch...\n",
-            'fresh' => echo "Dropping all tables and re-running migrations...\n",
-            'status' => echo "Migration status:\n  All migrations are up to date.\n",
+            'up' => print "Running migrations...\n  (no pending migrations)\n",
+            'rollback' => print "Rolling back last batch...\n",
+            'fresh' => print "Dropping all tables and re-running migrations...\n",
+            'status' => print "Migration status:\n  All migrations are up to date.\n",
         };
     }
 }

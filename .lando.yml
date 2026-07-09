@@ -1,0 +1,28 @@
+name: tavp-core
+recipe: lamp
+config:
+  php: '8.3'
+  webroot: public
+  database: mysql
+  build_as_root:
+    - apt-get update
+    - apt-get install -y software-properties-common unzip
+    - add-apt-repository ppa:ondrej/php -y
+    - apt-get update
+    - apt-get install -y php8.3-phalcon
+  via: apache
+services:
+  node:
+    type: node:20
+  database:
+    portforward: true
+    creds:
+      user: tavp
+      password: tavp
+      database: tavp
+tooling:
+  tavp:
+    service: appserver
+    cmd: php bin/tavp
+  composer:
+    service: appserver
