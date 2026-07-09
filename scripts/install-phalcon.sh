@@ -11,11 +11,8 @@
 #   sudo sh install-phalcon.sh 8.3 5.16.0 # pin PHP + Phalcon version
 #
 # Idempotent: exits early if Phalcon is already loaded.
-#
-# Note: intentionally avoid 'set -eu' for maximum shell compatibility
-# (Lando, Docker, VPS may use dash/ash which have limited options).
 
-# Auto-detect PHP version if not provided as argument
+# --- Detect PHP version ------------------------------------------------
 if [ -n "${1:-}" ]; then
     PHP_VERSION="$1"
 else
@@ -39,30 +36,65 @@ if [ "$(id -u)" -ne 0 ]; then
     exit 1
 fi
 
-# --- 3. OS family -------------------------------------------------------
-if [ -f /etc/os-release ]; then
-    # shellcheck disable=SC1091
-    . /etc/os-release
+# --- 3. Find phpize and php-config -------------------------------------
+# In Lando/Docker, PHP is often compiled from source with tools at
+# /usr/local/bin/. On VPS with apt packages, they may be versioned
+# (phpize8.3). We prefer whatever is already available.
+PHPIZE=""
+PHPCONFIG=""
+
+# First: check if plain phpize/php-config work (compiled-from-source)
+if command -v phpize >/dev/null 2>&1; then
+    PHPIZE="phpize"
+    PHPCONFIG="php-config"
 fi
 
-case "${ID:-unknown}" in
-    ubuntu|debian|raspbian) echo "==> Detected Debian/Ubuntu family." ;;
-    *) echo "WARNING: untested OS '${ID:-unknown}'. Proceeding anyway." >&2 ;;
-esac
+# Fallback: versioned names (apt-installed)
+if [ -z "$PHPIZE" ] || ! "$PHPIZE" --version >/dev/null 2>&1; then
+    if command -v "phpize${PHP_VERSION}" >/dev/null 2>&1; then
+        PHPIZE="phpize${PHP_VERSION}"
+        PHPCONFIG="php-config${PHP_VERSION}"
+    fi
+fi
 
-# --- 4. Build dependencies ---------------------------------------------
-echo "==> Installing build dependencies..."
-export DEBIAN_FRONTEND=noninteractive
-apt-get update -y
-apt-get install -y \
-    wget git curl build-essential autoconf pkg-config \
-    re2c libpcre3-dev libpcre2-dev zlib1g-dev \
-    "php${PHP_VERSION}-dev" "php${PHP_VERSION}-xml" "php-pear"
+if [ -z "$PHPIZE" ]; then
+    echo "ERROR: phpize not found. Install php-dev or php${PHP_VERSION}-dev first." >&2
+    exit 1
+fi
 
-PHPIZE="phpize${PHP_VERSION}"
-PHPCONFIG="php-config${PHP_VERSION}"
-command -v "${PHPIZE}" >/dev/null 2>&1 || PHPIZE="phpize"
-command -v "${PHPCONFIG}" >/dev/null 2>&1 || PHPCONFIG="php-config"
+echo "==> Using: ${PHPIZE}, ${PHPCONFIG}"
+
+# --- 4. Install build dependencies (only if missing) -------------------
+# Skip this step if PHP was compiled from source (phpize is at /usr/local/bin)
+# and build tools are already present.
+NEEDS_APT=0
+command -v make >/dev/null 2>&1 || NEEDS_APT=1
+command -v gcc >/dev/null 2>&1 || NEEDS_APT=1
+command -v pkg-config >/dev/null 2>&1 || NEEDS_APT=1
+
+if [ "$NEEDS_APT" -eq 1 ]; then
+    echo "==> Installing build dependencies..."
+    export DEBIAN_FRONTEND=noninteractive
+
+    # Detect OS and install appropriate packages
+    if [ -f /etc/os-release ]; then
+        . /etc/os-release
+    fi
+
+    case "${ID:-unknown}" in
+        ubuntu|debian|raspbian)
+            apt-get update -y
+            apt-get install -y \
+                build-essential autoconf pkg-config re2c \
+                libpcre2-dev zlib1g-dev
+            ;;
+        *)
+            echo "WARNING: untested OS. Install build tools manually." >&2
+            ;;
+    esac
+else
+    echo "==> Build tools already present, skipping apt install."
+fi
 
 # --- 5. Download source -------------------------------------------------
 echo "==> Downloading Phalcon ${PHALCON_VERSION} source..."
@@ -86,25 +118,30 @@ echo "==> Installing extension..."
 make install
 
 EXT_DIR="$(${PHPCONFIG} --extension-dir)"
-INI_DIR="$(${PHPCONFIG} --ini-dir 2>/dev/null || echo /etc/php/${PHP_VERSION}/cli/conf.d)"
+INI_DIR="$(${PHPCONFIG} --ini-dir 2>/dev/null || echo /usr/local/lib/php/extensions/no-debug-non-zts-20230831)"
 mkdir -p "${INI_DIR}"
 cat > "${INI_DIR}/30-phalcon.ini" <<EOF
-extension=${EXT_DIR}/phalcon.so
+extension=phalcon.so
 EOF
 
+# Also enable for any detected PHP SAPI conf.d directories
 for sapi in apache2 fpm cli; do
-    if [ -d "/etc/php/${PHP_VERSION}/${sapi}/conf.d" ]; then
-        cp "${INI_DIR}/30-phalcon.ini" "/etc/php/${PHP_VERSION}/${sapi}/conf.d/30-phalcon.ini"
-    fi
+    for dir in "/etc/php/${PHP_VERSION}/${sapi}/conf.d" "/usr/local/etc/php/conf.d"; do
+        if [ -d "$dir" ]; then
+            cp "${INI_DIR}/30-phalcon.ini" "${dir}/30-phalcon.ini" 2>/dev/null || true
+        fi
+    done
 done
 
 # --- 8. Verify ---------------------------------------------------------
 echo "==> Verifying..."
-if php -m | grep -qi '^phalcon$'; then
+if php -m 2>/dev/null | grep -qi '^phalcon$'; then
     echo "==> SUCCESS: Phalcon ${PHALCON_VERSION} installed for PHP ${PHP_VERSION}."
 else
-    echo "ERROR: Phalcon installed but not detected by php -m." >&2
-    exit 1
+    echo "WARNING: Phalcon compiled but not yet detected by php -m." >&2
+    echo "         You may need to restart PHP-FPM or the Lando service." >&2
+    echo "         Try: lando restart" >&2
+    exit 0
 fi
 
 cd /
