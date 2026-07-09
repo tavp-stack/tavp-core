@@ -30,9 +30,6 @@ class PhalconInstallCommand
             . ' ' . escapeshellarg($phalconVersion);
 
         echo "Running Phalcon installer...\n";
-        // Use bash explicitly; the script uses 'set -o pipefail' which
-        // plain sh (dash) does not support. /usr/bin/env finds bash
-        // regardless of where it is installed (Lando, Docker, VPS).
-        passthru('/usr/bin/env bash ' . escapeshellarg($script) . ' ' . $arg);
+        passthru('sh ' . escapeshellarg($script) . ' ' . $arg);
     }
 }
