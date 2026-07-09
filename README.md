@@ -4,6 +4,8 @@
 
 A curated tech stack for building fast, modern PHP web applications.
 
+**Current Version: 1.0.0 (Stable)**
+
 ## Features
 
 - **Phalcon 5.16** — High-performance C-extension MVC framework
@@ -18,6 +20,9 @@ A curated tech stack for building fast, modern PHP web applications.
 - **AI Integration** — OpenAI, Anthropic, Ollama support
 - **Module System** — Composer-based package discovery
 - **Marketplace** — Module and theme marketplace
+- **Three Runtimes** — PHP-FPM, TAVP Coil (Swoole), TAVP Relay (RoadRunner)
+- **SaaS Billing** — Stripe, Midtrans, Xendit, PayPal
+- **Kubernetes & Terraform** — Production deployment
 
 ## Quick Start
 
@@ -57,9 +62,10 @@ open http://localhost:8000
 
 ## Versioning
 
-TAVP follows [ZeroVer](https://0ver.org/) during development:
-- **0.x.y** — Development (anything may change)
+TAVP follows Semantic Versioning:
 - **1.0.0** — Stable (public API locked, SemVer applies)
+- **1.x.y** — Minor (backward-compatible features)
+- **x.0.0** — Major (breaking changes)
 
 ## License
 
