@@ -34,6 +34,52 @@ cp .env.example .env
 tavp key:generate
 ```
 
+## Quick start
+
+```bash
+# Start dev server
+tavp serve
+
+# Create a model
+tavp make:model User
+
+# Run migrations
+tavp migrate
+```
+
+## Testing
+
+```bash
+composer test          # Run PHPUnit tests
+composer stan          # Run PHPStan static analysis
+composer cs            # Check code style
+composer cs-fix        # Auto-fix code style
+```
+
+## Project structure
+
+```
+tavp-core/
+├── app/                # Application code (controllers, models, etc.)
+├── config/             # Configuration files
+├── database/           # Migrations and seeders
+├── public/             # Web root (index.php, assets)
+├── resources/          # Views, frontend assets
+├── routes/             # Route definitions
+├── scripts/            # Utility scripts (phalcon install, etc.)
+├── src/                # Framework source code
+├── storage/            # Compiled views, logs, cache
+├── tests/              # Test files
+├── bin/                # CLI entry point (tavp command)
+├── composer.json       # PHP dependencies
+├── package.json        # Node.js dependencies
+├── vite.config.js      # Vite build configuration
+├── tailwind.config.js  # Tailwind CSS configuration
+├── phpunit.xml         # PHPUnit configuration
+├── phpstan.neon        # PHPStan configuration
+└── .php-cs-fixer.php   # Code style configuration
+```
+
 ## Status
 
 Part of **0.1.0 Genesis** (ZeroVer `0.MINOR.PATCH`). API is not yet stable
