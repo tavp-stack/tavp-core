@@ -24,6 +24,7 @@ class TavpCommand
             'make:controller' => MakeControllerCommand::class,
             'make:model' => MakeModelCommand::class,
             'key:generate' => KeyGenerateCommand::class,
+            'phalcon:install' => PhalconInstallCommand::class,
             'deploy' => DeployCommand::class,
             'env:list' => EnvListCommand::class,
         ];
