@@ -12,6 +12,13 @@
     "suggest": {
         "ext-phalcon": "The Phalcon 5 C-extension. Install it with: tavp phalcon:install"
     },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../tavp-cli",
+            "options": { "symlink": true }
+        }
+    ],
     "require-dev": {
         "phpunit/phpunit": "^10.0",
         "phpstan/phpstan": "^1.10",
