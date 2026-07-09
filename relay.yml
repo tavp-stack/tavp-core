@@ -1,0 +1,57 @@
+version: "3.0"
+
+server:
+  host: 0.0.0.0
+  port: 8081
+
+rpc:
+  listen: tcp://127.0.0.1:6001
+
+relay:
+  num_workers: 4
+  max_jobs: 1000
+  allocate_timeout: 60s
+  destroy_timeout: 60s
+
+plugins:
+  http:
+    address: 0.0.0.0:8081
+    max_request_size: 1024MB
+    max_conns_per_ip: 0
+    pool:
+      num_workers: 4
+      max_jobs: 100
+      allocate_timeout: 60s
+      destroy_timeout: 60s
+
+ 限幅器:
+  rates:
+    http:
+      interval: 1
+      rate: 100
+
+  logs:
+    mode: development
+    level: info
+
+http:
+  address: 0.0.0.0:8081
+  max_request_size: 1024MB
+  pool:
+    num_workers: 4
+    max_jobs: 100
+    allocate_timeout: 60s
+    destroy_timeout: 60s
+  static:
+    dir: public
+    forbid: []
+  pool:
+    command: "php bin/relay.php"
+    env:
+      - APP_ENV: production
+    relay: pipe
+    pool:
+      num_workers: 4
+      max_jobs: 100
+      allocate_timeout: 60s
+      destroy_timeout: 60s
