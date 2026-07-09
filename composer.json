@@ -1,4 +1,4 @@
-﻿{
+{
     "name":  "tavp/core",
     "description":  "TAVP Stack core framework â€” Tailwind + Alpine + Volt + Phalcon, with a Laravel-style ergonomic layer on top of Phalcon.",
     "type":  "library",
