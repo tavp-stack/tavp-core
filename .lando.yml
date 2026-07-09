@@ -3,11 +3,10 @@
 # ============================================
 #
 # Usage:
-#   lando start     - Start all services
-#   lando tavp      - Run the tavp CLI
-#   lando composer  - Run composer commands
-#   lando php       - Run php commands
-#   lando artisan   - (alias) php bin/tavp
+#   lando start              - Start all services
+#   lando ssh                - Enter the appserver container
+#   bash scripts/install-phalcon.sh   - Install Phalcon 5.16 (inside container)
+#   lando tavp               - Run the tavp CLI
 #
 # App:         http://tavp-core.lndo.site
 # Mailpit:     http://mail.tavp-core.lndo.site   (OTP inbox)
@@ -19,12 +18,6 @@ config:
   php: '8.3'
   webroot: public
   database: mariadb:10.11
-  # Install Phalcon 5.16 (latest stable) at build time.
-  build_as_root:
-    - apt-get update
-    - apt-get install -y git unzip libzip-dev autoconf build-essential php8.3-dev php-pear
-    - pecl install phalcon-5.16.0
-    - echo "extension=phalcon.so" > /usr/local/etc/php/conf.d/phalcon.ini
 
 services:
   appserver:
@@ -39,7 +32,7 @@ services:
 
   database:
     type: mariadb:10.11
-    portforward: 33306
+    portforward: 33307
     creds:
       user: tavp
       password: tavp
@@ -47,9 +40,9 @@ services:
 
   cache:
     type: redis
-    portforward: 36379
+    portforward: 36380
 
-  # Unique service name so OTP emails land in THIS project's Mailpit only.
+  # Unique Mailpit so OTP emails land only in this project's inbox.
   tavp-core-mailpit:
     type: mailpit
     overrides:
