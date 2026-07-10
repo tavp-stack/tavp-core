@@ -82,6 +82,14 @@ class Application
         return $this->config;
     }
 
+    /**
+     * Convenience accessor for a config value using "file.key" dot notation.
+     */
+    public function config(string $key, mixed $default = null): mixed
+    {
+        return $this->config->get($key, $default);
+    }
+
     public function getEnvironment(): string
     {
         return $this->environment;
