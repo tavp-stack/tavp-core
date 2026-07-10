@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tavp\Coil;
+namespace Tavp\Core\Coil;
 
 /**
  * Swoole connection pool for database and Redis.

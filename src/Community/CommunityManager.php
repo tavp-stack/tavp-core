@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tavp\Community;
+namespace Tavp\Core\Community;
 
 /**
  * Community manager — guidelines, code of conduct, contribution tools.

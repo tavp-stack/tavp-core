@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tavp\Deploy;
+namespace Tavp\Core\Deploy;
 
 /**
  * cPanel deployment adapter — generates deployment scripts for cPanel.

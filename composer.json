@@ -26,7 +26,14 @@
     "autoload":  {
                      "psr-4":  {
                                    "Tavp\\Core\\":  "src/"
-                               }
+                               },
+                     "classmap":  [
+                                      "src/"
+                                  ],
+                     "files":  [
+                                   "src/Support/helpers.php",
+                                   "src/Support/Helpers/view_helpers.php"
+                               ]
                  },
     "autoload-dev":  {
                          "psr-4":  {

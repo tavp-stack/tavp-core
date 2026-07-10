@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tavp\Core\Flash;
+namespace Tavp\Core\Support;
 
 /**
  * Flash message service — store messages for next request.

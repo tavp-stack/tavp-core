@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tavp\Theme;
+namespace Tavp\Core\Theme;
 
 /**
  * Theme manager — filesystem-based theme system.

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tavp\Coil;
+namespace Tavp\Core\Coil;
 
 use Swoole\Http\Server;
 use Swoole\Http\Request;

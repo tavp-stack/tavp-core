@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tavp\Marketplace;
+namespace Tavp\Core\Marketplace;
 
 /**
  * Theme marketplace — browse, preview, install, customize.

@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Tavp\Core\Support;
+
 /**
  * TAVP Stack Version
  */

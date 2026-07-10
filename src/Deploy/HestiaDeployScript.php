@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tavp\Deploy;
+namespace Tavp\Core\Deploy;
 
 /**
  * HestiaCP deployment integration — shell script generation.

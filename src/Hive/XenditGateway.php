@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tavp\Hive;
+namespace Tavp\Core\Hive;
 
 /**
  * Xendit payment gateway (Southeast Asia).

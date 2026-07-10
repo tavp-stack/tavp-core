@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tavp\Security;
+namespace Tavp\Core\Security;
 
 /**
  * Security audit — OWASP Top 10 checks.

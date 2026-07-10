@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tavp\Environment\Adapters;
+namespace Tavp\Core\Environment\Adapters;
 
 /**
  * XAMPP environment adapter — generates setup scripts for Windows XAMPP.

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tavp\Environment\Adapters;
+namespace Tavp\Core\Environment\Adapters;
 
 /**
  * DDEV environment adapter — generates .ddev/config.yaml.

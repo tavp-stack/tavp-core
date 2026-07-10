@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tavp\Relay;
+namespace Tavp\Core\Relay;
 
 use Spiral\RoadRunner\Worker;
 use Spiral\RoadRunner\PSR7Client;

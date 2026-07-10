@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tavp\Security;
+namespace Tavp\Core\Security;
 
 /**
  * Dependency scanner — check for vulnerable packages.

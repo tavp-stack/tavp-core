@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tavp\Broadcasting;
+namespace Tavp\Core\Broadcasting;
 
 /**
  * Pusher-compatible broadcast driver (Soketi/Pusher).

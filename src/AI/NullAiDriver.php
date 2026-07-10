@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tavp\AI;
+namespace Tavp\Core\AI;
 
 /**
  * Null AI driver (fallback when no provider configured).

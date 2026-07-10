@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tavp\Deploy;
+namespace Tavp\Core\Deploy;
 
 /**
  * Manages deployment across different environments.

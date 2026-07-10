@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tavp\Hub;
+namespace Tavp\Core\Hub;
 
 /**
  * CRUD resource generator for TAVPhub admin panel.

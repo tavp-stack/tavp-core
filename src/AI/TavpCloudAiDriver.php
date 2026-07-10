@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tavp\AI;
+namespace Tavp\Core\AI;
 
 /**
  * TAVP Cloud AI driver (hosted, free tier available).

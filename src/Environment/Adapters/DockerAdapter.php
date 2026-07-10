@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tavp\Environment\Adapters;
+namespace Tavp\Core\Environment\Adapters;
 
 /**
  * Docker environment adapter — generates docker-compose.yml and Dockerfile.

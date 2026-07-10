@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tavp\Api;
+namespace Tavp\Core\Api;
 
 /**
  * API freeze manager — track API stability.

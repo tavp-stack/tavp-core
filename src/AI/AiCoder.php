@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tavp\AI;
+namespace Tavp\Core\AI;
 
 /**
  * AI Coder — generate complete modules from natural language.

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tavp\Search;
+namespace Tavp\Core\Search;
 
 /**
  * Elasticsearch search driver.

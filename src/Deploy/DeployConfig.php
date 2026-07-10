@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tavp\Deploy;
+namespace Tavp\Core\Deploy;
 
 /**
  * .tavp-deploy.yml configuration file handling.

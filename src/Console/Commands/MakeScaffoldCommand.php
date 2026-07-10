@@ -276,7 +276,8 @@ VOLT,
             $html .= "            <label class=\"block text-sm font-medium text-gray-700\">" . ucfirst($field) . "</label>\n";
 
             if ($type === 'text') {
-                $html .= "            <textarea name=\"{$field}\" rows=\"4\" class=\"mt-1 block w-full rounded-md border-gray-300 shadow-sm\">{{ {$edit ? "item.{$field}" : ''} }}</textarea>\n";
+                $textareaValue = $edit ? "item.{$field}" : '';
+                $html .= "            <textarea name=\"{$field}\" rows=\"4\" class=\"mt-1 block w-full rounded-md border-gray-300 shadow-sm\">{{ {$textareaValue} }}</textarea>\n";
             } else {
                 $html .= "            <input type=\"text\" name=\"{$field}\"{$value} class=\"mt-1 block w-full rounded-md border-gray-300 shadow-sm\">\n";
             }

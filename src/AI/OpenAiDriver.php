@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tavp\AI;
+namespace Tavp\Core\AI;
 
 /**
  * OpenAI driver (GPT-4, GPT-3.5).

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tavp\Kit;
+namespace Tavp\Core\Kit;
 
 /**
  * User profile management.

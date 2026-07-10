@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tavp\Broadcasting;
+namespace Tavp\Core\Broadcasting;
 
 /**
  * Redis broadcast driver using Pub/Sub.

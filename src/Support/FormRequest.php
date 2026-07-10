@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tavp\Core\Validation;
+namespace Tavp\Core\Support;
 
 /**
  * Form request validation — validate input data with rules.

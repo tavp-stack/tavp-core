@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tavp\Kit;
+namespace Tavp\Core\Kit;
 
 /**
  * API token management for mobile/external clients.

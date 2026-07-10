@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tavp\Benchmark;
+namespace Tavp\Core\Benchmark;
 
 /**
  * Performance benchmark suite.

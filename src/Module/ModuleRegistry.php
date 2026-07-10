@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tavp\Module;
+namespace Tavp\Core\Module;
 
 /**
  * Module registry — discover, register, and manage modules.
