@@ -27,6 +27,8 @@ class TavpCommand
             'phalcon:install' => PhalconInstallCommand::class,
             'deploy' => DeployCommand::class,
             'env:list' => EnvListCommand::class,
+            'queue:work' => QueueWorkerCommand::class,
+            'schedule:run' => ScheduleRunCommand::class,
         ];
     }
 

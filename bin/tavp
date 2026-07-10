@@ -11,6 +11,7 @@ require_once __DIR__ . '/../src/Support/helpers.php';
 use Tavp\Core\Application;
 use Tavp\Core\Console\TavpCommand;
 use Tavp\Core\Database\DatabaseManager;
+use Tavp\Core\Queue\QueueManager;
 
 $app = new Application(dirname(__DIR__));
 $app->bootstrap();
@@ -20,6 +21,14 @@ $app->bind('db', function () use ($app) {
     $config = $app->getConfig()->get('database', []);
 
     return new DatabaseManager($config);
+});
+
+// Bind queue for queue:work and job dispatch
+$app->bind('queue', function () use ($app) {
+    $config = $app->getConfig()->get('queue', []);
+    $db = app('db')->getAdapter();
+
+    return new QueueManager($config, $db);
 });
 
 $command = new TavpCommand();

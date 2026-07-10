@@ -12,15 +12,15 @@ class QueueManager
     private array $drivers = [];
     private string $defaultDriver;
 
-    public function __construct(array $config)
+    public function __construct(array $config, ?\Phalcon\Db\Adapter\AdapterInterface $db = null)
     {
         $this->defaultDriver = $config['default'] ?? 'database';
 
         foreach ($config['connections'] ?? [] as $name => $connectionConfig) {
             $this->drivers[$name] = match ($connectionConfig['driver'] ?? 'database') {
-                'database' => new DatabaseQueue($connectionConfig),
+                'database' => new DatabaseQueue($connectionConfig, $db),
                 'redis' => new RedisQueue($connectionConfig),
-                default => new DatabaseQueue($connectionConfig),
+                default => new DatabaseQueue($connectionConfig, $db),
             };
         }
     }

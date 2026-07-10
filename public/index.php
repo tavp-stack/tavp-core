@@ -15,6 +15,7 @@ use Tavp\Core\Auth\TokenService;
 use Tavp\Core\Config\ConfigLoader;
 use Tavp\Core\Database\DatabaseManager;
 use Tavp\Core\Kernel;
+use Tavp\Core\Queue\QueueManager;
 use Tavp\Core\Routing\Router;
 use Tavp\Core\View\ViewFactory;
 
@@ -35,6 +36,13 @@ $app->bind('db', function () use ($app) {
     $config = $app->getConfig()->get('database', []);
 
     return new DatabaseManager($config);
+});
+
+$app->bind('queue', function () use ($app) {
+    $config = $app->getConfig()->get('queue', []);
+    $db = app('db')->getAdapter();
+
+    return new QueueManager($config, $db);
 });
 
 $app->bind('tokens', fn () => new TokenService(
