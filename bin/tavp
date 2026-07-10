@@ -6,8 +6,21 @@ declare(strict_types=1);
 // The TAVP command line entry point.
 
 require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../src/Support/helpers.php';
 
+use Tavp\Core\Application;
 use Tavp\Core\Console\TavpCommand;
+use Tavp\Core\Database\DatabaseManager;
+
+$app = new Application(dirname(__DIR__));
+$app->bootstrap();
+
+// Bind database so migrate and other commands can use it
+$app->bind('db', function () use ($app) {
+    $config = $app->getConfig()->get('database', []);
+
+    return new DatabaseManager($config);
+});
 
 $command = new TavpCommand();
 $command->run($argv);

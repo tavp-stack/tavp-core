@@ -13,6 +13,7 @@ use Tavp\Core\Auth\AuthService;
 use Tavp\Core\Auth\OtpService;
 use Tavp\Core\Auth\TokenService;
 use Tavp\Core\Config\ConfigLoader;
+use Tavp\Core\Database\DatabaseManager;
 use Tavp\Core\Kernel;
 use Tavp\Core\Routing\Router;
 use Tavp\Core\View\ViewFactory;
@@ -29,6 +30,12 @@ $app->bind('view', fn () => new ViewFactory(
 ));
 
 $app->bind('config', fn () => $app->getConfig());
+
+$app->bind('db', function () use ($app) {
+    $config = $app->getConfig()->get('database', []);
+
+    return new DatabaseManager($config);
+});
 
 $app->bind('tokens', fn () => new TokenService(
     env('JWT_SECRET', 'tavp-jwt-secret-change-me'),

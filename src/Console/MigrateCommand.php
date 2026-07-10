@@ -162,10 +162,20 @@ class MigrateCommand
 
         echo "  {$verb}: {$name}\n";
 
-        // Run without Phalcon DB adapter for now (schema-only mode)
-        // In production, inject the real adapter:
-        // $migration->runUp(app('db')->getAdapter());
-        echo "    (schema-only mode — connect a database to run)\n";
+        try {
+            $db = app('db');
+            $adapter = $db->getAdapter();
+
+            if ($direction === 'up') {
+                $migration->runUp($adapter);
+            } else {
+                $migration->runDown($adapter);
+            }
+
+            echo "    Done.\n";
+        } catch (\Throwable $e) {
+            echo "    (schema-only mode — {$e->getMessage()})\n";
+        }
     }
 
     private function getAllMigrationFiles(): array
