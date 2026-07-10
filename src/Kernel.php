@@ -6,6 +6,7 @@ namespace Tavp\Core;
 
 use Tavp\Core\Exceptions\ExceptionHandler;
 use Tavp\Core\Http\Middleware\Middleware;
+use Tavp\Core\Http\Response;
 use Tavp\Core\Routing\Router;
 
 /**
@@ -59,7 +60,9 @@ class Kernel
                 return $this->renderNotFound($uri);
             }
 
-            return $this->dispatch($method, $uri, $route);
+            $result = $this->dispatch($method, $uri, $route);
+
+            return $result instanceof Response ? $result->send() : (string) $result;
         } catch (\Throwable $e) {
             $response = $this->exceptionHandler->render($e);
             http_response_code($response->getStatusCode());
@@ -71,7 +74,7 @@ class Kernel
     /**
      * Dispatch a matched route through the middleware pipeline.
      */
-    private function dispatch(string $method, string $uri, array $route): string
+    private function dispatch(string $method, string $uri, array $route): mixed
     {
         $handler = $route['handler'];
         $routeParams = $route['parameters'];
@@ -91,10 +94,9 @@ class Kernel
             $pipeline = $this->pipelineStep($middlewareClass, $pipeline);
         }
 
-        // Execute the pipeline
-        $result = $pipeline();
-
-        return (string) $result;
+        // Execute the pipeline. The result may be a string or a Response;
+        // the caller (handle) finalizes it.
+        return $pipeline();
     }
 
     /**
@@ -113,10 +115,10 @@ class Kernel
     /**
      * Invoke a route handler (closure or [Controller, method]).
      */
-    private function invokeHandler($handler, array $parameters): string
+    private function invokeHandler($handler, array $parameters): mixed
     {
         if (is_callable($handler)) {
-            return (string) $handler($parameters);
+            return $handler($parameters);
         }
 
         if (is_array($handler) && count($handler) === 2) {
@@ -127,9 +129,8 @@ class Kernel
             }
 
             $controller = new $controllerClass();
-            $result = $controller->$method(...array_values($parameters));
 
-            return (string) $result;
+            return $controller->$method(...array_values($parameters));
         }
 
         throw new \RuntimeException('Invalid route handler.');

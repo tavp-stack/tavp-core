@@ -6,6 +6,27 @@ declare(strict_types=1);
 // These are intentionally small and human-readable.
 
 use Tavp\Core\Application;
+use Tavp\Core\Http\Response;
+
+if (!function_exists('response')) {
+    /**
+     * Create a Response, optionally with body content and status code.
+     */
+    function response(string $content = '', int $status = 200): Response
+    {
+        return (new Response())->setContent($content)->setStatusCode($status);
+    }
+}
+
+if (!function_exists('redirect')) {
+    /**
+     * Create a redirect Response to the given path or URL.
+     */
+    function redirect(string $path, int $status = 302): Response
+    {
+        return (new Response())->header('Location', $path)->setStatusCode($status);
+    }
+}
 
 if (!function_exists('env')) {
     /**

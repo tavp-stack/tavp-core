@@ -64,4 +64,14 @@ class Response
     {
         return $this->content;
     }
+
+    public function getStatusCode(): int
+    {
+        return $this->statusCode;
+    }
+
+    public function __toString(): string
+    {
+        return $this->content;
+    }
 }

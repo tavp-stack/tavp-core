@@ -54,14 +54,18 @@ class MailService
         fwrite($fp, "EHLO tavp\r\n");
         $response = fgets($fp, 512);
 
-        fwrite($fp, "AUTH LOGIN\r\n");
-        $response = fgets($fp, 512);
+        // Only authenticate when credentials are provided. Dev mail catchers
+        // (e.g. Mailpit) accept mail without AUTH.
+        if ($username !== '') {
+            fwrite($fp, "AUTH LOGIN\r\n");
+            $response = fgets($fp, 512);
 
-        fwrite($fp, base64_encode($username) . "\r\n");
-        $response = fgets($fp, 512);
+            fwrite($fp, base64_encode($username) . "\r\n");
+            $response = fgets($fp, 512);
 
-        fwrite($fp, base64_encode($password) . "\r\n");
-        $response = fgets($fp, 512);
+            fwrite($fp, base64_encode($password) . "\r\n");
+            $response = fgets($fp, 512);
+        }
 
         fwrite($fp, "MAIL FROM:<{$from}>\r\n");
         $response = fgets($fp, 512);
