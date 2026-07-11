@@ -79,19 +79,18 @@ abstract class Model extends PhalconModel
     /**
      * Create and persist a model using only fillable columns.
      */
-    public static function create(array $attributes): static
+    public function create(array $attributes): static
     {
-        $model = new static();
-        $model->fill($attributes);
-        $model->save();
+        $this->fill($attributes);
+        $this->save();
 
-        return $model;
+        return $this;
     }
 
     /**
      * Begin a query on this model (delegates to Phalcon's query builder).
      */
-    public static function query(): QueryBuilder
+    public function query(): QueryBuilder
     {
         return new QueryBuilder(new static());
     }
@@ -99,7 +98,7 @@ abstract class Model extends PhalconModel
     /**
      * Find a model by its primary key.
      */
-    public static function findById($id): ?static
+    public function findById($id): ?static
     {
         return static::findFirst([
             'conditions' => 'id = :id:',
@@ -110,7 +109,7 @@ abstract class Model extends PhalconModel
     /**
      * Find first record matching conditions.
      */
-    public static function first(): ?static
+    public function first(): ?static
     {
         return static::findFirst([
             'order' => static::getPrimaryKey() . ' DESC',
@@ -120,7 +119,7 @@ abstract class Model extends PhalconModel
     /**
      * Get the primary key name.
      */
-    public static function getPrimaryKey(): string
+    public function getPrimaryKey(): string
     {
         $model = new static();
 
@@ -225,7 +224,7 @@ abstract class Model extends PhalconModel
     /**
      * Get all records.
      */
-    public static function all(): array
+    public function all(): array
     {
         return static::find() ?: [];
     }
