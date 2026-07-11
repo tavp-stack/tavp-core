@@ -145,6 +145,11 @@ class Kernel
 
     private function renderNotFound(string $uri): string
     {
-        return "404 — Page not found: {$uri}";
+        try {
+            $view = app('view');
+            return $view->render('404');
+        } catch (\Throwable) {
+            return "404 — Page not found: {$uri}";
+        }
     }
 }
