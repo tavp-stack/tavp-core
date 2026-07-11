@@ -97,4 +97,59 @@ class SqlSchema
     {
         $this->pdo->exec("ALTER TABLE `{$table}` DROP COLUMN `{$column}`");
     }
+
+    /**
+     * Helper to build a column definition.
+     */
+    public function column(string $name, string $type, array $options = []): array
+    {
+        return array_merge([
+            'name' => $name,
+            'type' => $type,
+        ], $options);
+    }
+
+    /**
+     * Add an index to a table.
+     */
+    public function addIndex(string $table, array $columns, ?string $name = null, bool $unique = false): void
+    {
+        $indexName = $name ?: 'idx_' . $table . '_' . implode('_', $columns);
+        $uniqueStr = $unique ? 'UNIQUE ' : '';
+        $cols = implode(', ', array_map(fn ($c) => "`{$c}`", $columns));
+
+        $this->pdo->exec("CREATE {$uniqueStr}INDEX `{$indexName}` ON `{$table}` ({$cols})");
+    }
+
+    /**
+     * Drop an index from a table.
+     */
+    public function dropIndex(string $table, string $indexName): void
+    {
+        $this->pdo->exec("DROP INDEX `{$indexName}` ON `{$table}`");
+    }
+
+    /**
+     * Add a foreign key constraint.
+     */
+    public function addForeignKey(
+        string $table,
+        string $column,
+        string $referencedTable,
+        string $referencedColumn,
+        string $onDelete = 'RESTRICT',
+        string $onUpdate = 'RESTRICT'
+    ): void {
+        $fkName = "fk_{$table}_{$column}";
+        $sql = "ALTER TABLE `{$table}` ADD CONSTRAINT `{$fkName}` FOREIGN KEY (`{$column}`) REFERENCES `{$referencedTable}`(`{$referencedColumn}`) ON DELETE {$onDelete} ON UPDATE {$onUpdate}";
+        $this->pdo->exec($sql);
+    }
+
+    /**
+     * Drop a foreign key constraint.
+     */
+    public function dropForeignKey(string $table, string $constraintName): void
+    {
+        $this->pdo->exec("ALTER TABLE `{$table}` DROP FOREIGN KEY `{$constraintName}`");
+    }
 }
