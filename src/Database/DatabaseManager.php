@@ -53,10 +53,10 @@ class DatabaseManager
 
         $connection = $connections[$name];
 
-        $adapterClass = match ($connection['adapter'] ?? 'Mysql') {
-            'Mysql' => \Phalcon\Db\Adapter\Pdo\Mysql::class,
-            'Postgresql' => \Phalcon\Db\Adapter\Pdo\Postgresql::class,
-            'Sqlite' => \Phalcon\Db\Adapter\Pdo\Sqlite::class,
+        $adapterClass = match (strtolower($connection['adapter'] ?? 'mysql')) {
+            'mysql' => \Phalcon\Db\Adapter\Pdo\Mysql::class,
+            'postgresql' => \Phalcon\Db\Adapter\Pdo\Postgresql::class,
+            'sqlite' => \Phalcon\Db\Adapter\Pdo\Sqlite::class,
             default => throw new \RuntimeException(
                 "Unsupported database adapter: {$connection['adapter']}"
             ),

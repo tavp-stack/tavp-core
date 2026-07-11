@@ -21,18 +21,18 @@ class MailService
     /**
      * Send an email.
      */
-    public function send(string $to, string $subject, string $body, array $attachments = []): bool
+    public function send(string $to, string $subject, string $body, string $html = ''): bool
     {
         return match ($this->driver) {
-            'smtp' => $this->sendSmtp($to, $subject, $body, $attachments),
-            'mailgun' => $this->sendMailgun($to, $subject, $body, $attachments),
-            'ses' => $this->sendSes($to, $subject, $body, $attachments),
+            'smtp' => $this->sendSmtp($to, $subject, $body, $html),
+            'mailgun' => $this->sendMailgun($to, $subject, $body),
+            'ses' => $this->sendSes($to, $subject, $body),
             'log' => $this->sendLog($to, $subject, $body),
             default => false,
         };
     }
 
-    private function sendSmtp(string $to, string $subject, string $body, array $attachments): bool
+    private function sendSmtp(string $to, string $subject, string $body, string $html = ''): bool
     {
         $host = $this->config['host'] ?? 'smtp.example.com';
         $port = $this->config['port'] ?? 587;
@@ -40,7 +40,6 @@ class MailService
         $password = $this->config['password'] ?? '';
         $from = $this->config['from'] ?? 'noreply@example.com';
 
-        // Simple SMTP implementation using fsockopen
         $errno = 0;
         $errstr = '';
         $fp = fsockopen($host, $port, $errno, $errstr, 30);
@@ -50,41 +49,43 @@ class MailService
         }
 
         $response = fgets($fp, 512);
-
         fwrite($fp, "EHLO tavp\r\n");
         $response = fgets($fp, 512);
 
-        // Only authenticate when credentials are provided. Dev mail catchers
-        // (e.g. Mailpit) accept mail without AUTH.
         if ($username !== '') {
             fwrite($fp, "AUTH LOGIN\r\n");
             $response = fgets($fp, 512);
-
             fwrite($fp, base64_encode($username) . "\r\n");
             $response = fgets($fp, 512);
-
             fwrite($fp, base64_encode($password) . "\r\n");
             $response = fgets($fp, 512);
         }
 
         fwrite($fp, "MAIL FROM:<{$from}>\r\n");
         $response = fgets($fp, 512);
-
         fwrite($fp, "RCPT TO:<{$to}>\r\n");
         $response = fgets($fp, 512);
-
         fwrite($fp, "DATA\r\n");
         $response = fgets($fp, 512);
 
         $headers = "From: {$from}\r\n";
         $headers .= "To: {$to}\r\n";
         $headers .= "Subject: {$subject}\r\n";
-        $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
-        $headers .= "\r\n";
+        $headers .= "MIME-Version: 1.0\r\n";
 
-        fwrite($fp, $headers . $body . "\r\n.\r\n");
+        if (!empty($html)) {
+            $boundary = md5(uniqid((string) time()));
+            $headers .= "Content-Type: multipart/alternative; boundary=\"{$boundary}\"\r\n\r\n";
+            $headers .= "--{$boundary}\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\n";
+            $headers .= $body . "\r\n--{$boundary}\r\nContent-Type: text/html; charset=UTF-8\r\n\r\n";
+            $headers .= $html . "\r\n--{$boundary}--\r\n";
+        } else {
+            $headers .= "Content-Type: text/plain; charset=UTF-8\r\n\r\n";
+            $headers .= $body . "\r\n";
+        }
+
+        fwrite($fp, $headers . ".\r\n");
         $response = fgets($fp, 512);
-
         fwrite($fp, "QUIT\r\n");
         fclose($fp);
 

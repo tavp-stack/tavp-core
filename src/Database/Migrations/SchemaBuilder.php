@@ -32,13 +32,27 @@ class SchemaBuilder
         $def = new TableDefinition($columns, $references);
         $definition($def);
 
-        $options = ['columns' => $columns];
+        // Convert column arrays to Phalcon Column objects
+        $phalconColumns = [];
+        foreach ($columns as $col) {
+            $definition = [
+                'type' => $col['type'],
+                'size' => $col['size'] ?? null,
+                'notNull' => !($col['null'] ?? false),
+                'default' => $col['default'] ?? null,
+                'autoIncrement' => $col['identity'] ?? false,
+                'primary' => $col['primary'] ?? false,
+            ];
+            $phalconColumns[] = new Column($col['name'], $definition);
+        }
+
+        $options = ['columns' => $phalconColumns];
 
         if (!empty($references)) {
             $options['references'] = $references;
         }
 
-        $this->connection->createTable($table, null, $options);
+        $this->connection->createTable($table, '', $options);
     }
 
     /**
@@ -162,7 +176,8 @@ class TableDefinition
         string $onDelete = 'RESTRICT',
         string $onUpdate = 'RESTRICT'
     ): void {
-        $this->references[] = new Reference([
+        $name = "fk_{$column}_{$referencedTable}";
+        $this->references[] = new Reference($name, [
             'referencedTable' => $referencedTable,
             'columns' => [$column],
             'referencedColumns' => [$referencedColumn],
