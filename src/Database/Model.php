@@ -233,8 +233,8 @@ abstract class Model extends PhalconModel
     /**
      * Count records.
      */
-    public static function count(array $parameters = []): int
+    public static function count(): int
     {
-        return (int) parent::count($parameters);
+        return (int) parent::count();
     }
 }
