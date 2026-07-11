@@ -77,12 +77,15 @@ abstract class Model extends PhalconModel
     }
 
     /**
-     * Create and persist a model using only fillable columns.
+     * Fill mass-assignable attributes.
      */
-    public function create(array $attributes): static
+    public function fill(array $attributes): static
     {
-        $this->fill($attributes);
-        $this->save();
+        foreach ($attributes as $key => $value) {
+            if (in_array($key, $this->fillable, true)) {
+                $this->$key = $value;
+            }
+        }
 
         return $this;
     }
@@ -220,17 +223,4 @@ abstract class Model extends PhalconModel
     {
         return $this->softDeletes && $this->deleted_at !== null;
     }
-
-    /**
-     * Get all records.
-     */
-    public function all(): array
-    {
-        return static::find() ?: [];
-    }
-
-    /**
-     * Count records.
-     * Inherited from Phalcon\Model — no override needed.
-     */
 }
