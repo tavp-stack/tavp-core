@@ -77,20 +77,6 @@ abstract class Model extends PhalconModel
     }
 
     /**
-     * Fill mass-assignable attributes.
-     */
-    public function fill(array $attributes): static
-    {
-        foreach ($attributes as $key => $value) {
-            if (in_array($key, $this->fillable, true)) {
-                $this->$key = $value;
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * Begin a query on this model (delegates to Phalcon's query builder).
      */
     public function query(): QueryBuilder
