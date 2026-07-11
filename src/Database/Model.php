@@ -79,14 +79,6 @@ abstract class Model extends PhalconModel
     }
 
     /**
-     * Begin a query on this model (delegates to Phalcon's query builder).
-     */
-    public function query(): QueryBuilder
-    {
-        return new QueryBuilder(new static());
-    }
-
-    /**
      * Find a model by its primary key.
      */
     public function findById($id): ?static
