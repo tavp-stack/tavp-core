@@ -232,11 +232,6 @@ abstract class Model extends PhalconModel
 
     /**
      * Count records.
-     *
-     * @return \Phalcon\Mvc\Model\ResultsetInterface|int
+     * Inherited from Phalcon\Model — no override needed.
      */
-    public static function count($parameters = [])
-    {
-        return parent::count($parameters);
-    }
 }
