@@ -31,5 +31,7 @@ class OtpCode extends Model
         'attempts' => 'integer',
     ];
 
+    protected bool $timestamps = false;
+
     use Relations;
 }
