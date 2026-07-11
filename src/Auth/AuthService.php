@@ -8,9 +8,6 @@ use Tavp\Core\Database\Models\User;
 
 /**
  * Orchestrates the OTP-first authentication flow.
- *
- * Per decision 10.11: login = request OTP → verify OTP → issue tokens.
- * Passwords are intentionally NOT part of the primary flow.
  */
 class AuthService
 {
@@ -30,7 +27,6 @@ class AuthService
 
     /**
      * Step 2: verify the OTP and, if valid, return a token pair.
-     * Creates the user automatically on first login (passwordless).
      */
     public function verifyOtpAndLogin(string $identifier, string $code): ?array
     {
@@ -38,29 +34,30 @@ class AuthService
             return null;
         }
 
-        $user = User::query()->where('email', $identifier)->first()
-            ?? User::query()->where('phone', $identifier)->first();
+        $user = User::findFirst([
+            'conditions' => 'email = :email: OR phone = :phone:',
+            'bind' => ['email' => $identifier, 'phone' => $identifier],
+        ]);
 
         if ($user === null) {
-            $user = User::create([
+            $user = new User();
+            $user->assign([
                 'email' => $identifier,
                 'name' => $identifier,
             ]);
+            $user->save();
         }
 
-        return $this->tokenService->createTokenPair((int) $user->id);
+        return $this->tokenService->createTokenPair($user->id);
     }
 
-    /**
-     * Return the user for a valid access token, or null.
-     */
-    public function currentUser(string $accessToken): ?User
+    public function currentUser(string $accessToken): ?object
     {
         $payload = $this->tokenService->decode($accessToken);
         if ($payload === null || ($payload['type'] ?? '') !== 'access') {
             return null;
         }
 
-        return User::findById($payload['sub']);
+        return User::findFirst($payload['sub']);
     }
 }
