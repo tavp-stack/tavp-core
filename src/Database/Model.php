@@ -55,11 +55,13 @@ abstract class Model extends PhalconModel
     protected array $scopes = [];
 
     /**
-     * Tell Phalcon which table this model maps to.
+     * Initialize model — set table name via Phalcon's setSource().
      */
-    public function getSource(): string
+    public function initialize(): void
     {
-        return $this->table !== '' ? $this->table : parent::getSource();
+        if ($this->table !== '') {
+            $this->setSource($this->table);
+        }
     }
 
     /**
