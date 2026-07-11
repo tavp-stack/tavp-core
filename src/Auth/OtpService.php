@@ -39,6 +39,14 @@ class OtpService
     }
 
     /**
+     * Hash an OTP code for storage/comparison.
+     */
+    public function hash(string $code): string
+    {
+        return hash('sha256', $code);
+    }
+
+    /**
      * Verify a submitted OTP.
      */
     public function verifyOtp(string $identifier, string $code): bool
