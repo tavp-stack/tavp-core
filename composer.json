@@ -16,7 +16,12 @@
                     "symfony/console":  "^6.0 || ^7.0"
                 },
     "suggest":  {
-                    "ext-phalcon":  "The Phalcon 5 C-extension. Install it with: tavp phalcon:install"
+                    "ext-phalcon":  "The Phalcon 5 C-extension. Install it with: tavp phalcon:install",
+                    "mailgun/mailgun-php":  "For Mailgun email driver",
+                    "sendgrid/sendgrid":  "For SendGrid email driver",
+                    "aws/aws-sdk-php":  "For Amazon SES email driver",
+                    "wildbit/postmark-php":  "For Postmark email driver",
+                    "phpmailer/phpmailer":  "For Gmail SMTP driver"
                 },
     "require-dev":  {
                         "phpunit/phpunit":  "^10.0",
