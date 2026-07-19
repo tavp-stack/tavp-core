@@ -24,3 +24,6 @@
 .vscode/
 .DS_Store
 *.log
+
+# security: local context, never commit
+.opencode/

@@ -59,6 +59,37 @@ class QueryBuilder
         return $this;
     }
 
+    /**
+     * Add an OR where clause (used by global search across columns).
+     */
+    public function orWhere(string|array $column, mixed $operator = null, mixed $value = null): self
+    {
+        if (is_array($column)) {
+            foreach ($column as $key => $val) {
+                $this->criteria->orWhere("{$key} = :{$key}:", [$key => $val]);
+            }
+
+            return $this;
+        }
+
+        if ($operator === null) {
+            $this->criteria->orWhere("{$column} = :{$column}:", [$column => $operator]);
+
+            return $this;
+        }
+
+        if ($value === null) {
+            $this->criteria->orWhere("{$column} = :{$column}:", [$column => $operator]);
+
+            return $this;
+        }
+
+        $param = $column . '_' . uniqid();
+        $this->criteria->orWhere("{$column} {$operator} :{$param}:", [$param => $value]);
+
+        return $this;
+    }
+
     public function orderBy(string $column, string $direction = 'asc'): self
     {
         $this->criteria->orderBy("{$column} {$direction}");
