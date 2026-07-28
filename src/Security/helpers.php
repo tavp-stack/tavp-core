@@ -5,8 +5,10 @@ declare(strict_types=1);
 use Tavp\Core\Security\CaptchaManager;
 
 if (!function_exists('captcha')) {
-    function captcha(string $type = 'math', array $attributes = []): string
+    function captcha(?string $type = null, array $attributes = []): string
     {
+        $type ??= config('captcha.type', 'math');
+
         return (new CaptchaManager())->render($type, $attributes);
     }
 }

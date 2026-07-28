@@ -63,40 +63,55 @@ class CaptchaManager
     private function renderMath(array $data, array $attrs): string
     {
         $extra = $this->buildAttributes($attrs);
+        $q = htmlspecialchars($data['question'], ENT_QUOTES, 'UTF-8');
+        $t = htmlspecialchars($data['token'], ENT_QUOTES, 'UTF-8');
 
-        return '<div class="tavp-captcha captcha-math"' . $extra . '>
-            <label class="captcha-question">' . htmlspecialchars($data['question'], ENT_QUOTES, 'UTF-8') . '</label>
-            <input type="hidden" name="captcha_token" value="' . htmlspecialchars($data['token'], ENT_QUOTES, 'UTF-8') . '">
-            <input type="number" name="captcha_answer" required
-                class="captcha-input"
-                placeholder="Jawaban"
-                autocomplete="off"
-                min="0" max="999">
+        return '<div class="tavp-captcha captcha-math bg-white rounded-2xl p-4 shadow-ambient border border-gray-100"' . $extra . '>
+            <label class="block text-sm font-semibold text-[#1F2937] mb-2">' . $q . '</label>
+            <input type="hidden" name="captcha_token" value="' . $t . '">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-base text-[#22C55E]">psychology</span>
+                <input type="number" name="captcha_answer" required
+                    class="w-full rounded-xl bg-[#F9FAFB] px-4 py-2.5 text-sm text-[#1F2937] outline-none transition-all duration-200 focus:bg-white focus:ring-2 focus:ring-[#22C55E]"
+                    placeholder="Jawaban"
+                    autocomplete="off"
+                    min="0" max="999">
+            </div>
         </div>';
     }
 
     private function renderPuzzle(array $data, array $attrs): string
     {
         $extra = $this->buildAttributes($attrs);
+        $q = htmlspecialchars($data['question'], ENT_QUOTES, 'UTF-8');
+        $t = htmlspecialchars($data['token'], ENT_QUOTES, 'UTF-8');
 
-        $html = '<div class="tavp-captcha captcha-puzzle"' . $extra . '>
-            <label class="captcha-question">' . htmlspecialchars($data['question'], ENT_QUOTES, 'UTF-8') . '</label>
-            <input type="hidden" name="captcha_token" value="' . htmlspecialchars($data['token'], ENT_QUOTES, 'UTF-8') . '">';
+        $html = '<div class="tavp-captcha captcha-puzzle bg-white rounded-2xl p-4 shadow-ambient border border-gray-100"' . $extra . '>
+            <label class="block text-sm font-semibold text-[#1F2937] mb-3 flex items-center gap-2">
+                <span class="material-symbols-outlined text-base text-[#22C55E]">live_help</span>
+                ' . $q . '
+            </label>
+            <input type="hidden" name="captcha_token" value="' . $t . '">';
 
         if (!empty($data['options'])) {
-            $html .= '<div class="captcha-options">';
+            $html .= '<div class="flex flex-wrap gap-2">';
 
             foreach ($data['options'] as $i => $option) {
-                $id = 'captcha_opt_' . $i;
-                $html .= '<input type="radio" name="captcha_answer" id="' . $id
-                    . '" value="' . htmlspecialchars((string) $option, ENT_QUOTES, 'UTF-8') . '"'
-                    . ($i === 0 ? ' checked' : '') . '>
-                    <label for="' . $id . '">' . htmlspecialchars((string) $option, ENT_QUOTES, 'UTF-8') . '</label>';
+                $esc = htmlspecialchars((string) $option, ENT_QUOTES, 'UTF-8');
+                $id = 'captcha_opt_' . $i . '_' . substr($data['token'], 0, 8);
+                $checked = $i === 0 ? ' checked' : '';
+
+                $html .= '<input type="radio" name="captcha_answer" id="' . $id . '" value="' . $esc . '"'
+                    . $checked . ' class="hidden peer">
+                    <label for="' . $id . '"
+                        class="px-4 py-2 rounded-xl text-sm font-medium text-[#1F2937] bg-[#F9FAFB] border border-gray-200 cursor-pointer transition-all duration-200 peer-checked:bg-[#22C55E] peer-checked:text-white peer-checked:border-[#22C55E] hover:bg-gray-100">'
+                        . $esc . '</label>';
             }
 
             $html .= '</div>';
         } else {
-            $html .= '<input type="text" name="captcha_answer" required class="captcha-input" autocomplete="off">';
+            $html .= '<input type="text" name="captcha_answer" required
+                class="w-full rounded-xl bg-[#F9FAFB] px-4 py-2.5 text-sm text-[#1F2937] outline-none transition-all duration-200 focus:bg-white focus:ring-2 focus:ring-[#22C55E]" autocomplete="off">';
         }
 
         $html .= '</div>';
@@ -116,16 +131,26 @@ class CaptchaManager
 
         $id = 'tavp-slider-' . $token;
 
-        return '<div class="tavp-captcha captcha-slider"' . $extra . '>
-            <div class="slider-container" id="' . $id . '-container" style="position:relative;width:' . $w . 'px;height:' . ($h + 50) . 'px">
-                <img src="' . $bg . '" alt="Captcha" style="width:' . $w . 'px;height:' . $h . 'px;border-radius:8px;display:block;user-select:none">
+        return '<div class="tavp-captcha captcha-slider bg-white rounded-2xl p-4 shadow-ambient border border-gray-100"' . $extra . '>
+            <label class="block text-sm font-semibold text-[#1F2937] mb-3 flex items-center gap-2">
+                <span class="material-symbols-outlined text-base text-[#22C55E]">swipe</span>
+                Geser slice ke posisi yang tepat
+            </label>
+            <div class="relative" id="' . $id . '-container">
+                <img src="' . $bg . '" alt="Captcha" style="width:' . $w . 'px;height:' . $h . 'px;max-width:100%;border-radius:12px;display:block;user-select:none">
                 <img src="' . $slice . '" alt="Slice"
-                    style="position:absolute;top:0;left:0;width:' . $sw . 'px;height:' . $h . 'px;pointer-events:none;image-rendering:pixelated"
+                    style="position:absolute;top:0;left:0;width:' . $sw . 'px;height:' . $h . 'px;pointer-events:none;image-rendering:pixelated;border-radius:4px"
                     id="' . $id . '-slice">
-                <input type="range" name="captcha_answer" id="' . $id . '-slider"
-                    min="0" max="' . ($w - $sw) . '" value="0"
-                    style="width:100%;margin-top:8px"
-                    oninput="document.getElementById(\'' . $id . '-slice\').style.left=this.value+\'px\'">
+                <div class="mt-3 px-1">
+                    <input type="range" name="captcha_answer" id="' . $id . '-slider"
+                        min="0" max="' . ($w - $sw) . '" value="0"
+                        class="w-full h-2 rounded-full appearance-none cursor-pointer bg-gray-200 accent-[#22C55E]"
+                        oninput="document.getElementById(\'' . $id . '-slice\').style.left=this.value+\'px\'">
+                    <div class="flex justify-between text-[10px] text-gray-400 mt-0.5">
+                        <span>Geser</span>
+                        <span>Lepaskan</span>
+                    </div>
+                </div>
             </div>
             <input type="hidden" name="captcha_token" value="' . $token . '">
         </div>';
