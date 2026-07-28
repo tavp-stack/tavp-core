@@ -35,10 +35,11 @@
                      "classmap":  [
                                       "src/"
                                   ],
-                     "files":  [
-                                   "src/Support/helpers.php",
-                                   "src/Support/Helpers/view_helpers.php"
-                               ]
+                      "files":  [
+                                    "src/Support/helpers.php",
+                                    "src/Support/Helpers/view_helpers.php",
+                                    "src/Security/helpers.php"
+                                ]
                  },
     "autoload-dev":  {
                          "psr-4":  {
