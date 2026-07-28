@@ -28,7 +28,7 @@ class CaptchaManager
         return $this->make($type)->generate();
     }
 
-    public function verify(string $answer, string $token): bool
+    public function verify(string|int $answer, string $token): bool
     {
         $this->cleanup();
 

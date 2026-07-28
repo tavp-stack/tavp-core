@@ -29,7 +29,7 @@ class TextPuzzleCaptcha implements CaptchaInterface
         ];
     }
 
-    public function verify(string $answer, string $token): bool
+    public function verify(string|int $answer, string $token): bool
     {
         $this->cleanup();
 

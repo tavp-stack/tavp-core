@@ -8,5 +8,5 @@ interface CaptchaInterface
 {
     public function generate(): array;
 
-    public function verify(string $answer, string $token): bool;
+    public function verify(string|int $answer, string $token): bool;
 }
