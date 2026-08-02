@@ -132,9 +132,14 @@ class CaptchaManager
         $id = 'tavp-slider-' . $token;
 
         return '<div class="tavp-captcha captcha-slider bg-white rounded-2xl p-4 shadow-ambient border border-gray-100"' . $extra . '>
-            <label class="block text-sm font-semibold text-[#1F2937] mb-3 flex items-center gap-2">
-                <span class="material-symbols-outlined text-base text-[#22C55E]">swipe</span>
-                Geser slice ke posisi yang tepat
+            <label class="block text-sm font-semibold text-[#1F2937] mb-3 flex items-center gap-2 justify-between">
+                <span class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-base text-[#22C55E]">swipe</span>
+                    Geser slice ke posisi yang tepat
+                </span>
+                <button type="button" onclick="location.reload()" class="p-1 rounded-lg hover:bg-gray-100 transition-colors" title="Refresh captcha">
+                    <span class="material-symbols-outlined text-base text-gray-400">refresh</span>
+                </button>
             </label>
             <div class="relative" id="' . $id . '-container">
                 <img src="' . $bg . '" alt="Captcha" style="width:' . $w . 'px;height:' . $h . 'px;max-width:100%;border-radius:12px;display:block;user-select:none">
