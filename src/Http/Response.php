@@ -16,6 +16,12 @@ class Response
     private int $statusCode = 200;
     private array $headers = [];
 
+    public function __construct(string $content = '', int $statusCode = 200)
+    {
+        $this->content = $content;
+        $this->statusCode = $statusCode;
+    }
+
     public function setContent(string $content): self
     {
         $this->content = $content;
