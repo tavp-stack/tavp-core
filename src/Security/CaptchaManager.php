@@ -70,9 +70,9 @@ class CaptchaManager
             <label class="block text-sm font-semibold text-[#1F2937] mb-2">' . $q . '</label>
             <input type="hidden" name="captcha_token" value="' . $t . '">
             <div class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-base text-[#22C55E]">psychology</span>
+                <span class="material-symbols-outlined text-base text-[#e6c446]">psychology</span>
                 <input type="number" name="captcha_answer" required
-                    class="w-full rounded-xl bg-[#F9FAFB] px-4 py-2.5 text-sm text-[#1F2937] outline-none transition-all duration-200 focus:bg-white focus:ring-2 focus:ring-[#22C55E]"
+                    class="w-full rounded-xl bg-[#F9FAFB] px-4 py-2.5 text-sm text-[#1F2937] outline-none transition-all duration-200 focus:bg-white focus:ring-2 focus:ring-[#e6c446]"
                     placeholder="Jawaban"
                     autocomplete="off"
                     min="0" max="999">
@@ -88,7 +88,7 @@ class CaptchaManager
 
         $html = '<div class="tavp-captcha captcha-puzzle bg-white rounded-2xl p-4 shadow-ambient border border-gray-100"' . $extra . '>
             <label class="block text-sm font-semibold text-[#1F2937] mb-3 flex items-center gap-2">
-                <span class="material-symbols-outlined text-base text-[#22C55E]">live_help</span>
+                <span class="material-symbols-outlined text-base text-[#e6c446]">live_help</span>
                 ' . $q . '
             </label>
             <input type="hidden" name="captcha_token" value="' . $t . '">';
@@ -104,14 +104,14 @@ class CaptchaManager
                 $html .= '<input type="radio" name="captcha_answer" id="' . $id . '" value="' . $esc . '"'
                     . $checked . ' class="hidden peer">
                     <label for="' . $id . '"
-                        class="px-4 py-2 rounded-xl text-sm font-medium text-[#1F2937] bg-[#F9FAFB] border border-gray-200 cursor-pointer transition-all duration-200 peer-checked:bg-[#22C55E] peer-checked:text-white peer-checked:border-[#22C55E] hover:bg-gray-100">'
+                        class="px-4 py-2 rounded-xl text-sm font-medium text-[#1F2937] bg-[#F9FAFB] border border-gray-200 cursor-pointer transition-all duration-200 peer-checked:bg-[#e6c446] peer-checked:text-white peer-checked:border-[#e6c446] hover:bg-gray-100">'
                         . $esc . '</label>';
             }
 
             $html .= '</div>';
         } else {
             $html .= '<input type="text" name="captcha_answer" required
-                class="w-full rounded-xl bg-[#F9FAFB] px-4 py-2.5 text-sm text-[#1F2937] outline-none transition-all duration-200 focus:bg-white focus:ring-2 focus:ring-[#22C55E]" autocomplete="off">';
+                class="w-full rounded-xl bg-[#F9FAFB] px-4 py-2.5 text-sm text-[#1F2937] outline-none transition-all duration-200 focus:bg-white focus:ring-2 focus:ring-[#e6c446]" autocomplete="off">';
         }
 
         $html .= '</div>';
@@ -134,7 +134,7 @@ class CaptchaManager
         return '<div class="tavp-captcha captcha-slider bg-white rounded-2xl p-4 shadow-ambient border border-gray-100"' . $extra . '>
             <label class="block text-sm font-semibold text-[#1F2937] mb-3 flex items-center gap-2 justify-between">
                 <span class="flex items-center gap-2">
-                    <span class="material-symbols-outlined text-base text-[#22C55E]">swipe</span>
+                    <span class="material-symbols-outlined text-base text-[#e6c446]">swipe</span>
                     Geser slice ke posisi yang tepat
                 </span>
                 <button type="button" onclick="location.reload()" class="p-1 rounded-lg hover:bg-gray-100 transition-colors" title="Refresh captcha">
@@ -149,7 +149,7 @@ class CaptchaManager
                 <div class="mt-3 px-1">
                     <input type="range" name="captcha_answer" id="' . $id . '-slider"
                         min="0" max="' . ($w - $sw) . '" value="0"
-                        class="w-full h-2 rounded-full appearance-none cursor-pointer bg-gray-200 accent-[#22C55E]"
+                        class="w-full h-2 rounded-full appearance-none cursor-pointer bg-gray-200 accent-[#e6c446]"
                         oninput="document.getElementById(\'' . $id . '-slice\').style.left=this.value+\'px\'">
                     <div class="flex justify-between text-[10px] text-gray-400 mt-0.5">
                         <span>Geser</span>

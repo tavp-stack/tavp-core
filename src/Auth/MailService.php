@@ -87,6 +87,11 @@ class MailService
             throw new \RuntimeException("SMTP connection failed: {$errstr} ({$errno})");
         }
 
+        // Never let the SMTP dialog hang forever: each socket read/write
+        // times out after 15s. This guarantees sendOtp() returns (and the
+        // OTP is delivered, or an error is reported) instead of blocking.
+        stream_set_timeout($fp, 15);
+
         // Read server greeting
         $this->readAll($fp, ['220']);
 
