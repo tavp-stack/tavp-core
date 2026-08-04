@@ -8,17 +8,33 @@ class MathCaptcha implements CaptchaInterface
 {
     private const TTL = 120;
 
-    private const OPERATORS = ['+', '-', '×'];
-
     public function generate(): array
     {
-        $a = random_int(1, 20);
-        $b = random_int(1, 20);
-        $op = self::OPERATORS[array_rand(self::OPERATORS)];
+        // Default: simple addition of two small numbers so everyone can solve
+        // it. Operator set and operand range are configurable for stricter
+        // deployments (e.g. config('captcha.math.max')).
+        $max = (int) $this->opt('captcha.math.max', 10);
+        $allowMinus = (bool) $this->opt('captcha.math.allow_minus', false);
+        $allowMultiply = (bool) $this->opt('captcha.math.allow_multiply', false);
+
+        $a = random_int(1, max(1, $max));
+        $b = random_int(1, max(1, $max));
+
+        $op = '+';
+        if ($allowMultiply || $allowMinus) {
+            $ops = ['+'];
+            if ($allowMinus) {
+                $ops[] = '-';
+            }
+            if ($allowMultiply) {
+                $ops[] = '×';
+            }
+            $op = $ops[array_rand($ops)];
+        }
 
         $answer = match ($op) {
             '+' => $a + $b,
-            '-' => $a - $b,
+            '-' => max($a, $b) - min($a, $b),
             '×' => $a * $b,
             default => 0,
         };
@@ -73,5 +89,13 @@ class MathCaptcha implements CaptchaInterface
                 unset($_SESSION['_captcha'][$token]);
             }
         }
+    }
+
+    private function opt(string $key, mixed $default): mixed
+    {
+        if (function_exists('config')) {
+            return config($key, $default);
+        }
+        return $default;
     }
 }
