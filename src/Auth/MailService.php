@@ -88,7 +88,7 @@ class MailService
         }
 
         // Read server greeting
-        $this->readLine($fp);
+        $this->readAll($fp, ['220']);
 
         // EHLO
         fwrite($fp, "EHLO tavp\r\n");
@@ -97,7 +97,7 @@ class MailService
         // STARTTLS if port 587
         if ($port === 587) {
             fwrite($fp, "STARTTLS\r\n");
-            $this->readAll($fp);
+            $this->readAll($fp, ['220']);
             stream_socket_enable_crypto($fp, true, STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT);
             fwrite($fp, "EHLO tavp\r\n");
             $this->readAll($fp);
@@ -106,11 +106,11 @@ class MailService
         // AUTH LOGIN if credentials provided
         if ($username !== '' && $password !== '') {
             fwrite($fp, "AUTH LOGIN\r\n");
-            $this->readAll($fp);
+            $this->readAll($fp, ['334']);
             fwrite($fp, base64_encode($username) . "\r\n");
-            $this->readAll($fp);
+            $this->readAll($fp, ['334']);
             fwrite($fp, base64_encode($password) . "\r\n");
-            $this->readAll($fp);
+            $this->readAll($fp, ['235']);
         }
 
         // MAIL FROM
@@ -123,13 +123,17 @@ class MailService
 
         // DATA
         fwrite($fp, "DATA\r\n");
-        $this->readAll($fp);
+        $this->readAll($fp, ['354']);
 
         // Build email
-        $email = "From: {$from}\r\n";
+        $messageId = time() . '.' . bin2hex(random_bytes(6)) . '@' . (preg_replace('/^[^@]*@/', '', $from) ?: 'tavp.web.id');
+        $email = "Message-ID: <{$messageId}>\r\n";
+        $email .= "Date: " . date('r') . "\r\n";
+        $email .= "From: {$from}\r\n";
         $email .= "To: {$to}\r\n";
         $email .= "Subject: {$subject}\r\n";
         $email .= "MIME-Version: 1.0\r\n";
+        $email .= "X-Mailer: TAVP CMS Mailer\r\n";
 
         if (!empty($html)) {
             $boundary = md5(uniqid((string) time()));
@@ -157,47 +161,37 @@ class MailService
     }
 
     /**
-     * Read a single SMTP reply line and throw on hard errors (5xx).
+     * Consume a (possibly multiline) SMTP response and verify its code.
+     *
+     * Multi-line replies are signalled by "NNN-..." lines; the final line is
+     * "NNN <text>". Throws if the returned code is not in $expected.
      */
-    private function readLine($fp): string
+    private function readAll($fp, array $expected = ['250']): string
     {
-        $line = fgets($fp, 512);
-        if ($line === false || trim($line) === '') {
-            throw new \RuntimeException('SMTP: connection closed by server');
-        }
-        $trimmed = trim($line);
-        if (isset($trimmed[0]) && $trimmed[0] === '5' && str_starts_with($trimmed, '5')) {
-            throw new \RuntimeException("SMTP server error: {$trimmed}");
-        }
-        return $trimmed;
-    }
-
-    /**
-     * Consume a (possibly multiline) SMTP response. Multi-line replies are
-     * signalled by "NNN-..." lines; the final line is "NNN <text>".
-     */
-    private function readAll($fp): void
-    {
+        $last = '';
         while (!feof($fp)) {
             $line = fgets($fp, 512);
             if ($line === false || strlen($line) < 4) {
                 break;
             }
-            // Last line of a multiline reply: "NNN text"
+            $last = trim($line);
+            // Final line of a reply: "NNN text"
             if ($line[3] === ' ') {
-                $code = substr($line, 0, 3);
-                if ($code === '354') {
-                    break;
-                }
-                if ($code === '250') {
-                    break;
-                }
-                if ($code[0] === '5') {
-                    throw new \RuntimeException('SMTP server error: ' . trim($line));
-                }
                 break;
             }
+            // Continuation "NNN-...": keep reading
         }
+
+        if ($last === '') {
+            throw new \RuntimeException('SMTP: empty or closed reply');
+        }
+
+        $code = substr($last, 0, 3);
+        if (!in_array($code, $expected, true)) {
+            throw new \RuntimeException("SMTP server error: {$last}");
+        }
+
+        return $last;
     }
 
     // -------------------------------------------------------------------
