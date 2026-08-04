@@ -60,14 +60,35 @@ class MailService
         $host = $this->config['host'] ?? '127.0.0.1';
         $port = (int) ($this->config['port'] ?? 1025);
         $from = $this->config['from'] ?? 'noreply@example.com';
+        $username = $this->config['username'] ?? '';
+        $password = $this->config['password'] ?? '';
 
-        $fp = @fsockopen($host, $port, $errno, $errstr, 5);
+        // Port 465 = implicit TLS: connect through an SSL context from the start.
+        // Port 587 = plain, then upgrade via STARTTLS.
+        $secure = $port === 465;
+
+        if ($secure) {
+            $ctx = stream_context_create([
+                'ssl' => ['verify_peer' => false, 'verify_peer_name' => false],
+            ]);
+            $fp = @stream_socket_client(
+                "ssl://{$host}:{$port}",
+                $errno,
+                $errstr,
+                10,
+                STREAM_CLIENT_CONNECT,
+                $ctx
+            );
+        } else {
+            $fp = @fsockopen($host, $port, $errno, $errstr, 10);
+        }
+
         if (!$fp) {
             throw new \RuntimeException("SMTP connection failed: {$errstr} ({$errno})");
         }
 
         // Read server greeting
-        fgets($fp, 512);
+        $this->readLine($fp);
 
         // EHLO
         fwrite($fp, "EHLO tavp\r\n");
@@ -83,8 +104,6 @@ class MailService
         }
 
         // AUTH LOGIN if credentials provided
-        $username = $this->config['username'] ?? '';
-        $password = $this->config['password'] ?? '';
         if ($username !== '' && $password !== '') {
             fwrite($fp, "AUTH LOGIN\r\n");
             $this->readAll($fp);
@@ -137,6 +156,26 @@ class MailService
         return true;
     }
 
+    /**
+     * Read a single SMTP reply line and throw on hard errors (5xx).
+     */
+    private function readLine($fp): string
+    {
+        $line = fgets($fp, 512);
+        if ($line === false || trim($line) === '') {
+            throw new \RuntimeException('SMTP: connection closed by server');
+        }
+        $trimmed = trim($line);
+        if (isset($trimmed[0]) && $trimmed[0] === '5' && str_starts_with($trimmed, '5')) {
+            throw new \RuntimeException("SMTP server error: {$trimmed}");
+        }
+        return $trimmed;
+    }
+
+    /**
+     * Consume a (possibly multiline) SMTP response. Multi-line replies are
+     * signalled by "NNN-..." lines; the final line is "NNN <text>".
+     */
     private function readAll($fp): void
     {
         while (!feof($fp)) {
@@ -144,7 +183,18 @@ class MailService
             if ($line === false || strlen($line) < 4) {
                 break;
             }
-            if (strpos($line, '250') === 0 || strpos($line, '354') === 0) {
+            // Last line of a multiline reply: "NNN text"
+            if ($line[3] === ' ') {
+                $code = substr($line, 0, 3);
+                if ($code === '354') {
+                    break;
+                }
+                if ($code === '250') {
+                    break;
+                }
+                if ($code[0] === '5') {
+                    throw new \RuntimeException('SMTP server error: ' . trim($line));
+                }
                 break;
             }
         }
