@@ -1,13 +1,12 @@
-# TAVP Stack — Stable Release (1.0.0)
+# TAVP Stack — API Lock Notice
 
-## Public API Lock Notice
+## Public API Lock
 
-As of version 1.0.0, the TAVP Stack public API is **locked**. This means:
+The TAVP Stack public API is versioned using **Zero-based Versioning** (ZeroVer, see [0ver.org](https://0ver.org)). The major version stays at `0`:
 
-- **No breaking changes** without a major version bump
-- **Semantic Versioning** (SemVer) applies from this point
-- **Backward compatibility** guaranteed for all public interfaces
+- **No breaking changes** without a minor (x) bump in `0.x.y`
 - **Deprecation policy**: Deprecated features remain for at least 2 minor versions
+- **Backward compatibility** guaranteed for all public interfaces
 
 ## What is Locked?
 
@@ -47,15 +46,13 @@ As of version 1.0.0, the TAVP Stack public API is **locked**. This means:
 
 ## Migration Guide
 
-When upgrading between minor versions, refer to the CHANGELOG for:
+When upgrading between versions, refer to the CHANGELOG for:
 - Deprecated features
 - New alternatives
 - Migration steps
 
-## Post-1.0 Commitments
+## Versioning Commitments
 
-- **SemVer**: MAJOR.MINOR.PATCH
-- **LTS**: 2 years of security patches per MAJOR version
+- **ZeroVer**: major version stays at `0`, minor bumps for breaking changes, patch for bug fixes
 - **Changelog**: Detailed per-version entries
 - **Backward Compatibility**: Deprecated features kept for 2+ minor versions
-- **RFC Process**: Major changes go through community review

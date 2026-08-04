@@ -4,7 +4,7 @@
 
 TAVP is a curated PHP tech stack — not a framework. It combines Phalcon's C-extension performance with modern frontend tools (Tailwind CSS, Alpine.js) and Volt templating. Think of it as "Laravel ergonomics + Phalcon speed."
 
-**Current Version: 1.0.0 (Stable)**
+**Current Version: 0.1.9**
 
 ## Features
 
@@ -81,10 +81,10 @@ Benchmarked on a 2-core VPS with 2GB RAM:
 
 ## Versioning
 
-TAVP follows Semantic Versioning:
-- **1.0.0** — Stable (public API locked, SemVer applies)
-- **1.x.y** — Minor (backward-compatible features)
-- **x.0.0** — Major (breaking changes)
+TAVP follows Zero-based Versioning (ZeroVer):
+- **0.x.y** — Major version never exceeds zero (see [0ver.org](https://0ver.org))
+- **0.x.0** — Breaking changes bump the minor (x)
+- **0.x.y** — Bug fixes bump the patch (y)
 
 ## License
 
