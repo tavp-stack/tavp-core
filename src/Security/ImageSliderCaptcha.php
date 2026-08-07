@@ -16,6 +16,9 @@ class ImageSliderCaptcha implements CaptchaInterface
 
     private const TOLERANCE = 15;
 
+    /** Directory containing bundled placeholder photos (JPG). */
+    private const PHOTO_DIR = __DIR__ . '/../../resources/assets/captcha';
+
     public function generate(): array
     {
         $this->ensureGdLoaded();
@@ -83,6 +86,52 @@ class ImageSliderCaptcha implements CaptchaInterface
     }
 
     private function createBackground(): \GdImage
+    {
+        $photo = $this->loadPhoto();
+
+        if ($photo !== null) {
+            return $this->resizeToCanvas($photo);
+        }
+
+        return $this->createPatternBackground();
+    }
+
+    private function loadPhoto(): ?\GdImage
+    {
+        $files = glob(self::PHOTO_DIR . '/*.{jpg,jpeg,png,webp}', GLOB_BRACE);
+
+        if (!$files) {
+            return null;
+        }
+
+        $file = $files[array_rand($files)];
+        $img = @imagecreatefromstring((string) file_get_contents($file));
+
+        return $img !== false ? $img : null;
+    }
+
+    private function resizeToCanvas(\GdImage $src): \GdImage
+    {
+        $canvas = imagecreatetruecolor(self::IMG_WIDTH, self::IMG_HEIGHT);
+
+        $srcW = imagesx($src);
+        $srcH = imagesy($src);
+        $ratio = max(self::IMG_WIDTH / $srcW, self::IMG_HEIGHT / $srcH);
+
+        $newW = (int) round($srcW * $ratio);
+        $newH = (int) round($srcH * $ratio);
+        $resized = imagecreatetruecolor($newW, $newH);
+
+        imagecopyresampled($resized, $src, 0, 0, 0, 0, $newW, $newH, $srcW, $srcH);
+        imagecopy($canvas, $resized, (int) ((self::IMG_WIDTH - $newW) / 2), (int) ((self::IMG_HEIGHT - $newH) / 2), 0, 0, $newW, $newH);
+
+        imagedestroy($resized);
+        imagedestroy($src);
+
+        return $canvas;
+    }
+
+    private function createPatternBackground(): \GdImage
     {
         $img = imagecreatetruecolor(self::IMG_WIDTH, self::IMG_HEIGHT);
 
