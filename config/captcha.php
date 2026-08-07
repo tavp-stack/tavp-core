@@ -8,7 +8,7 @@ return [
     |
     | Supported: 'math', 'puzzle', 'slider'
     |
-    | Admin can change this via CMS admin panel.
+    | Admin can change this via CMS admin panel (Settings > Security).
     |
     */
     'type' => env('CAPTCHA_TYPE', 'math'),

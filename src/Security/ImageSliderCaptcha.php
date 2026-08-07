@@ -98,16 +98,23 @@ class ImageSliderCaptcha implements CaptchaInterface
 
     private function loadPhoto(): ?\GdImage
     {
-        $files = glob(self::PHOTO_DIR . '/*.{jpg,jpeg,png,webp}', GLOB_BRACE);
+        // Prefer PNG: it is the most universally decodable by GD across
+        // runtimes (some container builds ship without JPEG/WebP support).
+        foreach (['png', 'jpg', 'jpeg', 'webp'] as $ext) {
+            $files = glob(self::PHOTO_DIR . "/*.{$ext}");
+            if (!$files) {
+                continue;
+            }
 
-        if (!$files) {
-            return null;
+            $file = $files[array_rand($files)];
+            $img = @imagecreatefromstring((string) file_get_contents($file));
+
+            if ($img !== false) {
+                return $img;
+            }
         }
 
-        $file = $files[array_rand($files)];
-        $img = @imagecreatefromstring((string) file_get_contents($file));
-
-        return $img !== false ? $img : null;
+        return null;
     }
 
     private function resizeToCanvas(\GdImage $src): \GdImage
