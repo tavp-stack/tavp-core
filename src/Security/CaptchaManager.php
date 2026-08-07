@@ -128,6 +128,7 @@ class CaptchaManager
         $w = (int) $data['width'];
         $sw = (int) $data['sliceWidth'];
         $h = (int) $data['height'];
+        $targetX = (int) ($data['targetX'] ?? 0);
 
         $id = 'tavp-slider-' . $token;
 
@@ -135,18 +136,21 @@ class CaptchaManager
             <label class="block text-sm font-semibold text-[#1F2937] mb-3 flex items-center gap-2 justify-between">
                 <span class="flex items-center gap-2">
                     <span class="material-symbols-outlined text-base text-[#e6c446]">swipe</span>
-                    Geser slice ke posisi yang tepat
+                    Geser potongan ke area yang ditandai
                 </span>
                 <button type="button" onclick="location.reload()" class="p-1 rounded-lg hover:bg-gray-100 transition-colors" title="Refresh captcha">
                     <span class="material-symbols-outlined text-base text-gray-400">refresh</span>
                 </button>
             </label>
             <div class="relative" id="' . $id . '-container">
-                <img src="' . $bg . '" alt="Captcha" style="width:' . $w . 'px;height:' . $h . 'px;max-width:100%;border-radius:12px;display:block;user-select:none">
-                <img src="' . $slice . '" alt="Slice"
-                    style="position:absolute;top:0;left:0;width:' . $sw . 'px;height:' . $h . 'px;pointer-events:none;image-rendering:pixelated;border-radius:4px"
+                <img src="' . $bg . '" alt="Captcha" style="position:relative;z-index:0;width:' . $w . 'px;height:' . $h . 'px;max-width:100%;border-radius:12px;display:block;user-select:none">
+                <img src="' . $slice . '" alt="Piece"
+                    style="position:absolute;top:0;left:0;width:' . $sw . 'px;height:' . $h . 'px;pointer-events:none;z-index:1;border-radius:4px;box-shadow:0 4px 14px rgba(0,0,0,.55);outline:2px solid rgba(230,196,70,.9)"
                     id="' . $id . '-slice">
-                <div class="mt-3 px-1">
+                <div class="flex items-center justify-between text-xs text-gray-400 mt-1 px-1">
+                    <span>Geser ke kanan sampai potongan menutup garis putus-putus</span>
+                </div>
+                <div class="mt-2 px-1">
                     <input type="range" name="captcha_answer" id="' . $id . '-slider"
                         min="0" max="' . ($w - $sw) . '" value="0"
                         class="w-full h-2 rounded-full appearance-none cursor-pointer bg-gray-200 accent-[#e6c446]"

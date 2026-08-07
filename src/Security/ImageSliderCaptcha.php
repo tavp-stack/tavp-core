@@ -27,6 +27,8 @@ class ImageSliderCaptcha implements CaptchaInterface
 
         $fullImage = $this->createBackground();
 
+        $slotImage = $this->drawSlot($fullImage, $x);
+
         $sliceImage = $this->extractSlice($fullImage, $x);
 
         $token = bin2hex(random_bytes(16));
@@ -39,9 +41,9 @@ class ImageSliderCaptcha implements CaptchaInterface
         ];
 
         ob_start();
-        imagepng($fullImage);
+        imagepng($slotImage);
         $bgData = base64_encode(ob_get_clean());
-        imagedestroy($fullImage);
+        imagedestroy($slotImage);
 
         ob_start();
         imagepng($sliceImage);
@@ -55,6 +57,7 @@ class ImageSliderCaptcha implements CaptchaInterface
             'width' => self::IMG_WIDTH,
             'height' => self::IMG_HEIGHT,
             'sliceWidth' => self::SLICE_WIDTH,
+            'targetX' => $x,
             'type' => 'slider',
         ];
     }
@@ -197,6 +200,31 @@ class ImageSliderCaptcha implements CaptchaInterface
         imagecopy($slice, $source, 0, 0, $x, 0, self::SLICE_WIDTH, self::IMG_HEIGHT);
 
         return $slice;
+    }
+
+    /**
+     * Produce the background shown to the user, with the target slot
+     * visibly hollowed out so it is obvious where the slice belongs.
+     */
+    private function drawSlot(\GdImage $source, int $x): \GdImage
+    {
+        $canvas = imagecreatetruecolor(self::IMG_WIDTH, self::IMG_HEIGHT);
+        imagecopy($canvas, $source, 0, 0, 0, 0, self::IMG_WIDTH, self::IMG_HEIGHT);
+
+        // Semi-transparent dark overlay over the target slot.
+        $dark = imagecolorallocatealpha($canvas, 10, 12, 18, 60);
+        imagefilledrectangle($canvas, $x, 0, $x + self::SLICE_WIDTH - 1, self::IMG_HEIGHT - 1, $dark);
+
+        // Dashed outline to indicate exactly where the piece sits.
+        $white = imagecolorallocate($canvas, 255, 255, 255);
+        $style = [$white, $white, $white, $white, $white, $white, $white, $white, IMG_COLOR_TRANSPARENT, IMG_COLOR_TRANSPARENT, IMG_COLOR_TRANSPARENT, IMG_COLOR_TRANSPARENT];
+        imagesetstyle($canvas, $style);
+        imageline($canvas, $x, 0, $x + self::SLICE_WIDTH - 1, 0, IMG_COLOR_STYLED);
+        imageline($canvas, $x, self::IMG_HEIGHT - 1, $x + self::SLICE_WIDTH - 1, self::IMG_HEIGHT - 1, IMG_COLOR_STYLED);
+        imageline($canvas, $x, 0, $x, self::IMG_HEIGHT - 1, IMG_COLOR_STYLED);
+        imageline($canvas, $x + self::SLICE_WIDTH - 1, 0, $x + self::SLICE_WIDTH - 1, self::IMG_HEIGHT - 1, IMG_COLOR_STYLED);
+
+        return $canvas;
     }
 
     private function cleanup(): void
