@@ -2,27 +2,22 @@
 
 > **T**ailwind CSS + **A**lpine.js + **V**olt + **P**halcon = TAVP
 
-TAVP is a curated PHP tech stack — not a framework. It combines Phalcon's C-extension performance with modern frontend tools (Tailwind CSS, Alpine.js) and Volt templating. Think of it as "Laravel ergonomics + Phalcon speed."
+TAVP is a curated PHP tech stack for building web applications. It pairs Phalcon's C-extension performance with modern frontend tooling (Tailwind CSS, Alpine.js) and the Volt templating engine.
 
-**Current Version: 0.1.9**
+**Current Version: 0.1.12**
 
 ## Features
 
-- **Phalcon 5.16** — High-performance C-extension MVC framework
-- **Volt Templates** — Fast, secure template engine (compiled to PHP, not Livewire-based)
+- **Phalcon 5.16** — C-extension MVC framework
+- **Volt Templates** — Template engine compiled to PHP
 - **Tailwind CSS** — Utility-first CSS framework
 - **Alpine.js** — Lightweight JavaScript framework
-- **OTP Authentication** — Passwordless login via email, SMS, WhatsApp
+- **OTP Authentication** — Passwordless login (email, SMS, WhatsApp)
 - **JWT API Auth** — Token-based API authentication
 - **Role & Permission** — RBAC system
 - **CLI Tools** — Code generation, migrations, deployment
-- **40+ UI Components** — TAVPblocks component library (Tailwind + Alpine)
-- **AI Integration** — OpenAI, Anthropic, Ollama support
 - **Module System** — Composer-based package discovery
-- **Marketplace** — Module and theme marketplace
-- **4 Runtimes** — PHP-FPM, TAVP Coil (Swoole), TAVP Relay (RoadRunner), TAVP Weave (PHP Fibers)
-- **SaaS Billing** — Stripe, Midtrans, Xendit, PayPal
-- **Kubernetes & Terraform** — Production deployment
+- **Async Foundation** — Swoole-based async API layer (`Async`)
 
 ## Quick Start
 
@@ -43,25 +38,11 @@ open http://localhost:8000
 - [docs.tavp.web.id](https://docs.tavp.web.id/) — Official documentation (Bahasa Indonesia + English)
 - [Getting Started](https://docs.tavp.web.id/guide/what-is-tavp)
 - [CLI Reference](https://docs.tavp.web.id/reference/cli)
-- [Runtimes](https://docs.tavp.web.id/runtimes/overview)
 - [FAQ](https://docs.tavp.web.id/reference/faq)
 
 ## System Requirements
 
-- PHP 8.3+
-- Phalcon 5.16+ (install with `tavp phalcon:install`)
-- Node.js 18+ (for frontend assets)
-- Composer 2.x
-
-## Performance
-
-Benchmarked on a 2-core VPS with 2GB RAM:
-
-| Metric | PHP-FPM | TAVP Coil (Swoole) |
-|--------|---------|---------------------|
-| Requests/sec | 5,000+ | 12,000+ |
-| P95 Latency | <5ms | <2ms |
-| Memory per worker | <15MB | <8MB |
+| PHP 8.3+ | Phalcon 5.16+ (install with `tavp phalcon:install`) | Node.js 18+ (frontend) | Composer 2.x |
 
 ## Ecosystem
 
@@ -72,19 +53,24 @@ Benchmarked on a 2-core VPS with 2GB RAM:
 | [tavpid](https://github.com/tavp-stack/tavpid) | OTP-first authentication | `composer require tavp/tavpid` |
 | [tavpkit](https://github.com/tavp-stack/tavpkit) | Starter kits & bundles | `composer require tavp/tavpkit` |
 | [tavphub](https://github.com/tavp-stack/tavphub) | Admin panel | `composer require tavp/tavphub` |
-| [tavpblocks](https://github.com/tavp-stack/tavpblocks) | 40+ UI components | `composer require tavp/tavpblocks` |
-| [tavphive](https://github.com/tavp-stack/tavphive) | Billing & subscriptions | `composer require tavp/tavphive` |
-| [tavp-marketplace](https://github.com/tavp-stack/tavp-marketplace) | Module marketplace | `composer require tavp/tavp-marketplace` |
+| [tavpblocks](https://github.com/tavp-stack/tavpblocks) | UI components | `composer require tavp/tavpblocks` |
+| [tavp/analytics](https://github.com/tavp-stack/tavp-analytics) | Analytics | `composer require tavp/analytics` |
 | [tavp-installer](https://github.com/tavp-stack/tavp-installer) | Phalcon installer | `sh install_phalcon5.sh` |
-| [tavp/analytics](https://github.com/tavp-stack/tavp-analytics) | Analytics & fraud detection | `composer require tavp/analytics` |
-| [tavp/starter](https://github.com/tavp-stack/tavp-starter) | Project template | `tavp new my-app` |
 
 ## Versioning
 
 TAVP follows Zero-based Versioning (ZeroVer):
-- **0.x.y** — Major version never exceeds zero (see [0ver.org](https://0ver.org))
-- **0.x.0** — Breaking changes bump the minor (x)
-- **0.x.y** — Bug fixes bump the patch (y)
+
+| Version | Meaning |
+|---------|---------|
+| 0.x.0 | Breaking changes bump the minor (x) |
+| 0.x.y | Bug fixes bump the patch (y) |
+
+See [0ver.org](https://0ver.org).
+
+## Security
+
+See [SECURITY.md](SECURITY.md) for guidance on handling secrets and reporting security issues.
 
 ## License
 
@@ -94,5 +80,3 @@ MIT License
 
 - [GitHub](https://github.com/tavp-stack)
 - [Documentation](https://docs.tavp.web.id/)
-- [Discord](https://discord.gg/tavp)
-- [Twitter](https://twitter.com/tavpstack)
