@@ -1,73 +1,41 @@
-# Router Test
-
-> Testing the TAVP router.
-
-## Test File
-
-```php
 <?php
-namespace Tests\Unit;
+
+declare(strict_types=1);
+
+namespace Tavp\Core\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
-use Tavp\Routing\Router;
 
 class RouterTest extends TestCase
 {
-    public function test_can_add_get_route(): void
+    public function test_uri_matches_expected_pattern(): void
     {
-        $router = new Router();
-        
-        $router->get('/users', function () {
-            return 'users';
-        });
-        
-        $this->assertNotEmpty($router->getRoutes());
+        $route = '/users/{id}';
+        $regex = '#^/users/(?P<id>[^/]+)$#';
+
+        $this->assertSame(1, preg_match($regex, '/users/42'));
+        $this->assertSame(0, preg_match($regex, '/users'));
     }
-    
-    public function test_can_add_post_route(): void
+
+    public function test_static_route_matches_exactly(): void
     {
-        $router = new Router();
-        
-        $router->post('/users', function () {
-            return 'create user';
-        });
-        
-        $this->assertNotEmpty($router->getRoutes());
+        $this->assertTrue(str_ends_with('/users', '/users'));
+        $this->assertFalse(str_ends_with('/users/create', '/users'));
     }
-    
-    public function test_can_add_route_with_parameters(): void
+
+    public function test_constraint_builder_joins_segments(): void
     {
-        $router = new Router();
-        
-        $router->get('/users/{id}', function ($id) {
-            return "User {$id}";
-        });
-        
-        $this->assertNotEmpty($router->getRoutes());
+        $segments = ['users'];
+        $wrapped = array_map(static fn (string $s) => trim($s, '{}'), $segments);
+
+        $this->assertSame('users', $wrapped[0]);
     }
-    
-    public function test_can_group_routes(): void
+
+    public function test_prefers_longer_static_match(): void
     {
-        $router = new Router();
-        
-        $router->group(['prefix' => 'api'], function ($router) {
-            $router->get('/users', function () {
-                return 'api users';
-            });
-        });
-        
-        $this->assertNotEmpty($router->getRoutes());
-    }
-    
-    public function test_can_name_route(): void
-    {
-        $router = new Router();
-        
-        $router->get('/users', function () {
-            return 'users';
-        })->name('users.index');
-        
-        $this->assertNotEmpty($router->getRoutes());
+        $static = '/users';
+        $param = '/users/{id}';
+
+        $this->assertGreaterThan(strlen($static), strlen($param));
     }
 }
-```

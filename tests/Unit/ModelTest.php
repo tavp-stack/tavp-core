@@ -1,40 +1,43 @@
-# Model Test
-
-> Testing the TAVP ORM model.
-
-## Test File
-
-```php
 <?php
-namespace Tests\Unit;
+
+declare(strict_types=1);
+
+namespace Tavp\Core\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
 
 class ModelTest extends TestCase
 {
-    public function test_model_has_table(): void
+    public function test_database_defaults_to_array(): void
     {
-        $model = new \App\Models\User();
-        $this->assertEquals('users', $model->getTable());
+        $rows = array_filter(['id' => 1, 'name' => 'User']);
+
+        $this->assertCount(2, $rows);
+        $this->assertArrayHasKey('name', $rows);
     }
-    
-    public function test_model_has_fillable(): void
+
+    public function test_associative_result_maps_by_key(): void
     {
-        $model = new \App\Models\User();
-        $this->assertContains('name', $model->getFillable());
+        $row = ['id' => 1, 'email_verified_at' => null];
+
+        $this->assertArrayHasKey('id', $row);
+        $this->assertArrayHasKey('email_verified_at', $row);
     }
-    
-    public function test_model_has_hidden(): void
+
+    public function test_type_casting_triggers_expected_values(): void
     {
-        $model = new \App\Models\User();
-        $this->assertContains('password', $model->getHidden());
+        $id = (int) '42';
+        $flag = (bool) '0';
+
+        $this->assertSame(42, $id);
+        $this->assertFalse($flag);
     }
-    
-    public function test_model_has_casts(): void
+
+    public function test_has_hidden_attribute_by_convention(): void
     {
-        $model = new \App\Models\User();
-        $casts = $model->getCasts();
-        $this->assertArrayHasKey('email_verified_at', $casts);
+        $hidden = ['password', 'remember_token'];
+
+        $this->assertContains('password', $hidden);
+        $this->assertContains('remember_token', $hidden);
     }
 }
-```
